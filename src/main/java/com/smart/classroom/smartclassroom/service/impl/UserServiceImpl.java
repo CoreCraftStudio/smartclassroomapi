@@ -7,6 +7,7 @@ import com.smart.classroom.smartclassroom.entity.Student;
 import com.smart.classroom.smartclassroom.entity.Teacher;
 import com.smart.classroom.smartclassroom.entity.User;
 import com.smart.classroom.smartclassroom.exception.AuthenticationException;
+import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
 import com.smart.classroom.smartclassroom.exception.ValidationException;
 import com.smart.classroom.smartclassroom.repository.UserRepository;
 import com.smart.classroom.smartclassroom.service.UserService;
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
                 throw new AuthenticationException("User name or password is incorrect");
             }
         } else {
-            throw new ValidationException("No user for given email");
+            throw new ResourceNotFoundException("No user for given email");
         }
 
     }
