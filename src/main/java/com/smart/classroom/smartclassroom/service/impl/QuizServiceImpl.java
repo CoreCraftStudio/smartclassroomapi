@@ -29,11 +29,11 @@ public class QuizServiceImpl implements QuizService {
     private final QuestionRepository questionRepository;
 
     @Override
-    public QuizResponseDTO createQuiz(QuizRequestDTO quizRequestDTO) {
+    public QuizResponseDTO createQuiz(String teacherEmail, QuizRequestDTO quizRequestDTO) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(quizRequestDTO.getClassroomId());
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
-            if (quizRequestDTO.getEmail().equals(classroom.getTeacher().getEmail())) {
+            if (teacherEmail.equals(classroom.getTeacher().getEmail())) {
                 Quiz quiz = quizRepository.save(Quiz.builder()
                         .classroom(classroom)
                         .name(quizRequestDTO.getName())
@@ -86,11 +86,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizResponseDTO deleteQuiz(String email, Long classroomId, Long quizId) {
+    public QuizResponseDTO deleteQuiz(String teacherEmail, Long classroomId, Long quizId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
-            if (email.equals(classroom.getTeacher().getEmail())) {
+            if (teacherEmail.equals(classroom.getTeacher().getEmail())) {
                 Optional<Quiz> quiz = quizRepository.findById(quizId);
                 if (quiz.isPresent()) {
                     quizRepository.deleteById(quizId);

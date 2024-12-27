@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Student extends User {
+public class Student extends Member {
 
     @ManyToMany(mappedBy = "students")
     Set<Classroom> classrooms;

@@ -13,7 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizRequestDTO {
-    String email;
     String name;
     String description;
     Long classroomId;

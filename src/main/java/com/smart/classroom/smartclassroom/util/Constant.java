@@ -18,5 +18,12 @@ public final class Constant {
         public static final String MULTIPLE_CHOICE = "multiple-choice";
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class JWTConstant {
+        public static final String ISSUER = "core-craft-solution";
+        public static final String CIPHER = "HS256";
+        public static final int KEY_SIZE = 256;
+    }
+
 
 }

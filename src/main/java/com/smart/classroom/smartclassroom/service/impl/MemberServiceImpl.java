@@ -1,16 +1,16 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
-import com.smart.classroom.smartclassroom.dto.UserRequestDTO;
-import com.smart.classroom.smartclassroom.dto.UserResponseDTO;
+import com.smart.classroom.smartclassroom.dto.MemberRequestDTO;
+import com.smart.classroom.smartclassroom.dto.MemberResponseDTO;
+import com.smart.classroom.smartclassroom.entity.Member;
 import com.smart.classroom.smartclassroom.entity.Parent;
 import com.smart.classroom.smartclassroom.entity.Student;
 import com.smart.classroom.smartclassroom.entity.Teacher;
-import com.smart.classroom.smartclassroom.entity.User;
 import com.smart.classroom.smartclassroom.exception.AuthenticationException;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
 import com.smart.classroom.smartclassroom.exception.ValidationException;
 import com.smart.classroom.smartclassroom.repository.UserRepository;
-import com.smart.classroom.smartclassroom.service.UserService;
+import com.smart.classroom.smartclassroom.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,50 +22,50 @@ import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEAC
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class MemberServiceImpl implements MemberService {
 
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
-        Optional<User> optionalUser = userRepository.findByEmail(userRequestDTO.getEmail());
+    public MemberResponseDTO createMember(MemberRequestDTO memberRequestDTO) {
+        Optional<Member> optionalUser = userRepository.findByEmail(memberRequestDTO.getEmail());
         if (optionalUser.isEmpty()) {
-            UserResponseDTO.UserResponseDTOBuilder userResponseDTOBuilder = UserResponseDTO.builder();
-            String encodedPassword = passwordEncoder.encode(userRequestDTO.getPassword());
-            userRepository.save(switch (userRequestDTO.getType()) {
+            MemberResponseDTO.MemberResponseDTOBuilder memberResponseDTOBuilder = MemberResponseDTO.builder();
+            String encodedPassword = passwordEncoder.encode(memberRequestDTO.getPassword());
+            userRepository.save(switch (memberRequestDTO.getType()) {
                         case TEACHER -> {
                             Teacher teacher = Teacher.builder()
-                                    .email(userRequestDTO.getEmail())
-                                    .name(userRequestDTO.getName())
+                                    .email(memberRequestDTO.getEmail())
+                                    .name(memberRequestDTO.getName())
                                     .password(encodedPassword)
                                     .build();
-                            userResponseDTOBuilder.user(teacher);
+                            memberResponseDTOBuilder.member(teacher);
                             yield teacher;
                         }
                         case STUDENT -> {
                             Student student = Student.builder()
-                                    .email(userRequestDTO.getEmail())
-                                    .name(userRequestDTO.getName())
+                                    .email(memberRequestDTO.getEmail())
+                                    .name(memberRequestDTO.getName())
                                     .password(encodedPassword)
                                     .build();
-                            userResponseDTOBuilder.user(student);
+                            memberResponseDTOBuilder.member(student);
                             yield student;
                         }
                         default -> {
                             Parent parent = Parent.builder()
-                                    .email(userRequestDTO.getEmail())
-                                    .name(userRequestDTO.getName())
+                                    .email(memberRequestDTO.getEmail())
+                                    .name(memberRequestDTO.getName())
                                     .password(encodedPassword)
                                     .build();
-                            userResponseDTOBuilder.user(parent);
+                            memberResponseDTOBuilder.member(parent);
                             yield parent;
                         }
                     }
             );
-            return userResponseDTOBuilder
-                    .type(userRequestDTO.getType())
+            return memberResponseDTOBuilder
+                    .type(memberRequestDTO.getType())
                     .build();
 
         } else {
@@ -74,14 +74,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO viewUser(UserRequestDTO userRequestDTO) {
-        Optional<User> optionalUser = userRepository.findByEmail(userRequestDTO.getEmail());
+    public MemberResponseDTO viewMember(MemberRequestDTO memberRequestDTO) {
+        Optional<Member> optionalUser = userRepository.findByEmail(memberRequestDTO.getEmail());
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (passwordEncoder.matches(userRequestDTO.getPassword(), user.getPassword())) {
-                String type = userRepository.findTypeByEmail(userRequestDTO.getEmail());
-                return UserResponseDTO.builder()
-                        .user(user)
+            Member member = optionalUser.get();
+            if (passwordEncoder.matches(memberRequestDTO.getPassword(), member.getPassword())) {
+                String type = userRepository.findTypeByEmail(memberRequestDTO.getEmail());
+                return MemberResponseDTO.builder()
+                        .member(member)
                         .type(type)
                         .build();
             } else {
@@ -90,7 +90,6 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new ResourceNotFoundException("No user for given email");
         }
-
     }
 
 }

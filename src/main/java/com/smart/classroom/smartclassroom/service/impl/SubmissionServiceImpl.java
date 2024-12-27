@@ -3,9 +3,9 @@ package com.smart.classroom.smartclassroom.service.impl;
 import com.smart.classroom.smartclassroom.dto.SubmissionRequestDTO;
 import com.smart.classroom.smartclassroom.dto.SubmissionResponseDTO;
 import com.smart.classroom.smartclassroom.entity.Assignment;
+import com.smart.classroom.smartclassroom.entity.Member;
 import com.smart.classroom.smartclassroom.entity.Student;
 import com.smart.classroom.smartclassroom.entity.Submission;
-import com.smart.classroom.smartclassroom.entity.User;
 import com.smart.classroom.smartclassroom.exception.ValidationException;
 import com.smart.classroom.smartclassroom.repository.AssignmentRepository;
 import com.smart.classroom.smartclassroom.repository.SubmissionRepository;
@@ -28,7 +28,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     public SubmissionResponseDTO createSubmission(SubmissionRequestDTO submissionRequestDTO) {
         Optional<Assignment> optionalAssignment = assignmentRepository.findById(submissionRequestDTO.getAssignmentId());
         if (optionalAssignment.isPresent()) {
-            Optional<User> userOptional = userRepository.findByEmail(submissionRequestDTO.getEmail());
+            Optional<Member> userOptional = userRepository.findByEmail(submissionRequestDTO.getEmail());
             if (userOptional.isPresent()) {
                 Student student = (Student) userOptional.get();
                 Submission submission = submissionRepository.save(Submission.builder()

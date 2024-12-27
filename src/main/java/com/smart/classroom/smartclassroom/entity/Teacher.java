@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Teacher extends User {
+public class Teacher extends Member {
 
     @OneToMany(mappedBy = "teacher")
     @JsonIgnore

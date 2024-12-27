@@ -29,7 +29,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         Long classroomId = assignmentRequestDTO.getClassroomId();
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
-            Optional<User> optionalTeacher = userRepository.findByEmail(assignmentRequestDTO.getEmail());
+            Optional<Member> optionalTeacher = userRepository.findByEmail(assignmentRequestDTO.getEmail());
             if (optionalTeacher.isPresent()) {
                 Teacher teacher = (Teacher) optionalTeacher.get();
                 if (teacher.getClassrooms().stream().map(Classroom::getId).toList().contains(classroomId)) {
@@ -68,7 +68,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (optionalClassroom.isPresent()) {
             Optional<Assignment> assignmentOptional = assignmentRepository.findById(assignmentId);
             if (assignmentOptional.isPresent()) {
-                Optional<User> optionalUser = userRepository.findByEmail(email);
+                Optional<Member> optionalUser = userRepository.findByEmail(email);
                 if (optionalUser.isPresent()) {
                     Teacher teacher = (Teacher) optionalUser.get();
                     if (teacher.getClassrooms().stream().map(Classroom::getId).toList().contains(classroomId)) {
@@ -101,7 +101,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (optionalClassroom.isPresent()) {
             Optional<Assignment> assignmentOptional = assignmentRepository.findById(assignmentId);
             if (assignmentOptional.isPresent()) {
-                Optional<User> optionalUser = userRepository.findByEmail(email);
+                Optional<Member> optionalUser = userRepository.findByEmail(email);
                 if (optionalUser.isPresent()) {
                     Classroom classroom = optionalClassroom.get();
                     if (classroom.getStudents().stream().map(Student::getEmail).toList().contains(email)) {
@@ -128,7 +128,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     public AssignmentResponseDTO deleteAssignment(String email, Long classroomId, Long assignmentId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
-            Optional<User> optionalTeacher = userRepository.findByEmail(email);
+            Optional<Member> optionalTeacher = userRepository.findByEmail(email);
             if (optionalTeacher.isPresent()) {
                 Teacher teacher = (Teacher) optionalTeacher.get();
                 if (teacher.getClassrooms().stream().map(Classroom::getId).toList().contains(classroomId)) {

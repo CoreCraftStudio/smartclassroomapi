@@ -31,9 +31,8 @@ public class AnswerServiceImpl implements AnswerService {
     private final ClassroomRepository classroomRepository;
 
     @Override
-    public QuizResponseDTO createAnswerSet(AnswerSetRequestDTO answerSetRequestDTO) {
-        String studentEmail = answerSetRequestDTO.getEmail();
-        Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+    public QuizResponseDTO createAnswerSet(String studentEmail, AnswerSetRequestDTO answerSetRequestDTO) {
+        Optional<Member> optionalStudent = userRepository.findByEmail(studentEmail);
         if (optionalStudent.isPresent()) {
             Student student = (Student) optionalStudent.get();
             for (AnswerRequestDTO answerRequestDTO : answerSetRequestDTO.getAnswerSet()) {

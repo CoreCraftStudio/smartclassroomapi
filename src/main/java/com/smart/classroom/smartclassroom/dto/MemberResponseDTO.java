@@ -1,6 +1,6 @@
 package com.smart.classroom.smartclassroom.dto;
 
-import com.smart.classroom.smartclassroom.entity.User;
+import com.smart.classroom.smartclassroom.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDTO {
+public class MemberResponseDTO {
 
-    User user;
+    Member member;
     String type;
+    String token;
 }

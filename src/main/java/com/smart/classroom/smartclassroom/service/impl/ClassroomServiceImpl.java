@@ -24,8 +24,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final UserRepository userRepository;
 
     @Override
-    public ClassroomResponseDTO createClassroom(ClassroomRequestDTO classroomRequestDTO) {
-        Optional<User> optionalTeacher = userRepository.findByEmail(classroomRequestDTO.getEmail());
+    public ClassroomResponseDTO createClassroom(String teacherEmail, ClassroomRequestDTO classroomRequestDTO) {
+        Optional<Member> optionalTeacher = userRepository.findByEmail(teacherEmail);
         if (optionalTeacher.isPresent()) {
             Teacher teacher = (Teacher) optionalTeacher.get();
             classroomRepository.save(Classroom.builder()
@@ -67,7 +67,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
             if (teacherEmail.equals(teacher.getEmail())) {
-                Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+                Optional<Member> optionalStudent = userRepository.findByEmail(studentEmail);
                 if (optionalStudent.isPresent()) {
                     Student student = (Student) optionalStudent.get();
                     Set<Student> students = classroom.getStudents();
@@ -96,7 +96,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
             if (teacherEmail.equals(teacher.getEmail())) {
-                Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+                Optional<Member> optionalStudent = userRepository.findByEmail(studentEmail);
                 if (optionalStudent.isPresent()) {
                     Set<Student> students = classroom.getStudents();
                     students.removeIf(student -> studentEmail.equals(student.getEmail()));
@@ -123,13 +123,13 @@ public class ClassroomServiceImpl implements ClassroomService {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
             if (teacherEmail.equals(teacher.getEmail())) {
-                Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+                Optional<Member> optionalStudent = userRepository.findByEmail(studentEmail);
                 if (optionalStudent.isPresent()) {
                     Student student = (Student) optionalStudent.get();
                     if (Objects.isNull(parentEmail)) {
                         student.setParent(null);
                     } else {
-                        Optional<User> optionalParent = userRepository.findByEmail(parentEmail);
+                        Optional<Member> optionalParent = userRepository.findByEmail(parentEmail);
                         if (optionalParent.isPresent()) {
                             Parent parent = (Parent) optionalParent.get();
                             student.setParent(parent);

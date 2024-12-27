@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ClassroomRequestDTO {
 
-    String email;
     String name;
 
 }

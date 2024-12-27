@@ -5,14 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnswerSetRequestDTO {
-
-    Long classroomId;
-    Set<AnswerRequestDTO> answerSet;
+public class AuthResponseDTO {
+    String token;
+    String type;
 }
