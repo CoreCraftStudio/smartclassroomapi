@@ -21,8 +21,8 @@ public class Teacher extends Member {
     Set<Classroom> classrooms;
 
     @Builder
-    public Teacher(String email, String name, String password, Set<Classroom> classrooms) {
-        super(email, name, password);
+    public Teacher(String email, String name, String password, Boolean freemium, Set<Classroom> classrooms) {
+        super(email, name, password, freemium);
         this.classrooms = classrooms;
     }
 

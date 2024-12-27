@@ -32,8 +32,8 @@ public class Student extends Member {
     Set<Submission> submissions;
 
     @Builder
-    public Student(String email, String name, String password, Set<Classroom> classrooms, Parent parent, Set<Answer> answers, Set<Submission> submissions) {
-        super(email, name, password);
+    public Student(String email, String name, String password, Boolean freemium, Set<Classroom> classrooms, Parent parent, Set<Answer> answers, Set<Submission> submissions) {
+        super(email, name, password, freemium);
         this.classrooms = classrooms;
         this.parent = parent;
         this.answers = answers;

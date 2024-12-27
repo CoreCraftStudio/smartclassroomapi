@@ -24,4 +24,6 @@ public abstract class Member {
     @JsonIgnore
     String password;
 
+    Boolean freemium;
+
 }
