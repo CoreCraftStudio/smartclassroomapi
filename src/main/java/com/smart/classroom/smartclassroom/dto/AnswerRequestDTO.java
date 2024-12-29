@@ -13,8 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnswerRequestDTO {
-
     Long questionId;
-    String answerType;
     Set<String> answers;
 }

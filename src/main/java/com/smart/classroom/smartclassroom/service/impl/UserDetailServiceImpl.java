@@ -27,6 +27,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                     .username(member.getEmail())
                     .password(member.getPassword())
                     .roles(type)
+                    .authorities(type)
                     .build();
         } else {
             throw new UsernameNotFoundException("No user for given email");

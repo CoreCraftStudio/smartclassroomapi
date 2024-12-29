@@ -17,36 +17,36 @@ public class ClassroomController {
 
     private final ClassroomService classroomService;
 
-    @PostMapping("/classroom")
+    @PostMapping("/classrooms")
     public ClassroomResponseDTO setClassroom(@RequestBody ClassroomRequestDTO classroomRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.createClassroom(user.getUsername(), classroomRequestDTO);
     }
 
-    @DeleteMapping("/classroom/{classroomId}")
-    public ClassroomResponseDTO deleteClassroom(@PathVariable Long classroomId) {
+    @DeleteMapping("/classrooms")
+    public ClassroomResponseDTO deleteClassroom(@RequestParam Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.deleteClassroom(user.getUsername(), classroomId);
     }
 
 
-    @PutMapping("/classroom/{classroomId}/student/{studentEmail}")
-    public StudentResponseDTO addStudent(@PathVariable String studentEmail, @PathVariable Long classroomId) {
+    @PutMapping("/classrooms/{classroomId}")
+    public StudentResponseDTO addStudent(@RequestParam String studentEmail, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.addStudent(user.getUsername(), studentEmail, classroomId);
     }
 
-    @DeleteMapping("/classroom/{classroomId}/student/{studentEmail}")
-    public StudentResponseDTO dropStudent(@PathVariable String studentEmail, @PathVariable Long classroomId) {
+    @DeleteMapping("/classrooms/{classroomId}")
+    public StudentResponseDTO dropStudent(@RequestParam String studentEmail, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.dropStudent(user.getUsername(), studentEmail, classroomId);
     }
 
-    @PatchMapping("/classroom/{classroomId}/student/{studentEmail}")
+    @PatchMapping("/classrooms/{classroomId}")
     public StudentResponseDTO updateParent(@PathVariable String studentEmail, @RequestParam(required = false) String parentEmail, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();

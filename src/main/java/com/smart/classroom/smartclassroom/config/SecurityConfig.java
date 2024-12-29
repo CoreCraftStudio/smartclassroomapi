@@ -2,7 +2,6 @@ package com.smart.classroom.smartclassroom.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +21,6 @@ import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEAC
 public class SecurityConfig {
 
     @Bean
-    @Profile("prod")
     public SecurityFilterChain filterChainProd(AuthFilter authFilter, HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
@@ -44,21 +42,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    @Bean
-    @Profile("non-prod")
-    public SecurityFilterChain filterChainNonProd(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                        authorizationManagerRequestMatcherRegistry
-                                .anyRequest().permitAll())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        return http.build();
-    }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

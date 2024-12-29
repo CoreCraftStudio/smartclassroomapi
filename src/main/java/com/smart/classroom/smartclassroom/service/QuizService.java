@@ -7,7 +7,9 @@ public interface QuizService {
 
     QuizResponseDTO createQuiz(String teacherEmail, QuizRequestDTO quizRequestDTO);
 
-    QuizResponseDTO deleteQuiz(String teacherEmail, Long classroomId, Long quizId);
+    QuizResponseDTO deleteQuiz(String teacherEmail, Long quizId);
+
+    QuizResponseDTO viewQuizzes(String email, String type, Long classroomId);
 
 
 }

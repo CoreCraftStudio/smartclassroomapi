@@ -40,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
                                     .email(memberRequestDTO.getEmail())
                                     .name(memberRequestDTO.getName())
                                     .password(encodedPassword)
+                                    .freemium(Boolean.FALSE)
                                     .build();
                             memberResponseDTOBuilder.member(teacher);
                             yield teacher;
@@ -49,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
                                     .email(memberRequestDTO.getEmail())
                                     .name(memberRequestDTO.getName())
                                     .password(encodedPassword)
+                                    .freemium(Boolean.FALSE)
                                     .build();
                             memberResponseDTOBuilder.member(student);
                             yield student;
@@ -58,6 +60,7 @@ public class MemberServiceImpl implements MemberService {
                                     .email(memberRequestDTO.getEmail())
                                     .name(memberRequestDTO.getName())
                                     .password(encodedPassword)
+                                    .freemium(Boolean.FALSE)
                                     .build();
                             memberResponseDTOBuilder.member(parent);
                             yield parent;
