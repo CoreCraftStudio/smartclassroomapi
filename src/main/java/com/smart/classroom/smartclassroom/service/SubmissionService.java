@@ -1,11 +1,11 @@
 package com.smart.classroom.smartclassroom.service;
 
+import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
 import com.smart.classroom.smartclassroom.dto.SubmissionRequestDTO;
-import com.smart.classroom.smartclassroom.dto.SubmissionResponseDTO;
 
 public interface SubmissionService {
 
-    SubmissionResponseDTO createSubmission(SubmissionRequestDTO submissionRequestDTO);
+    AssignmentResponseDTO createSubmission(String studentEmail, SubmissionRequestDTO submissionRequestDTO);
 
-    SubmissionResponseDTO deleteSubmission(String email, Long submissionId);
+    AssignmentResponseDTO deleteSubmission(String studentEmail, String classroomId, Long submissionId);
 }

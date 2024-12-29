@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmissionRequestDTO {
-    String email;
+    String description;
     Long assignmentId;
     Long attachmentId;
 }
