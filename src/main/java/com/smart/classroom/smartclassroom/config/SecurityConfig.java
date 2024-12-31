@@ -28,11 +28,11 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
 
-                                .requestMatchers("/classroom/**").hasRole(TEACHER)
+                                .requestMatchers("/classrooms/**").hasRole(TEACHER)
 
-                                .requestMatchers(HttpMethod.PUT, "/quiz").hasRole(STUDENT)
-                                .requestMatchers(HttpMethod.POST, "/quiz").hasRole(TEACHER)
-                                .requestMatchers(HttpMethod.DELETE, "/quiz/**").hasRole(TEACHER)
+                                .requestMatchers(HttpMethod.PUT, "/quizzes").hasRole(STUDENT)
+                                .requestMatchers(HttpMethod.POST, "/quizzes").hasRole(TEACHER)
+                                .requestMatchers(HttpMethod.DELETE, "/quizzes").hasRole(TEACHER)
 
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

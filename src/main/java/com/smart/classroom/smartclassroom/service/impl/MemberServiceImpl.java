@@ -97,7 +97,7 @@ public class MemberServiceImpl implements MemberService {
                 throw new AuthenticationException("User name or password is incorrect");
             }
         } else {
-            throw new ResourceNotFoundException("No user for given email");
+            throw new ResourceNotFoundException("No user for username");
         }
     }
 
