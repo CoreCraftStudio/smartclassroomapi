@@ -32,8 +32,8 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuizRepository quizRepository;
 
     @Override
-    public QuizResponseDTO createAnswerSet(String studentEmail, AnswerSetRequestDTO answerSetRequestDTO) {
-        Optional<Member> optionalStudent = userRepository.findByEmail(studentEmail);
+    public QuizResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO) {
+        Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
         Optional<Quiz> optionalQuiz = quizRepository.findById(answerSetRequestDTO.getQuizId());
         if (optionalStudent.isPresent() && optionalQuiz.isPresent()) {
             Student student = (Student) optionalStudent.get();
@@ -91,7 +91,7 @@ public class AnswerServiceImpl implements AnswerService {
                     .map(Question::getAnswers)
                     .flatMap(Set::stream)
                     .collect(Collectors.toSet())
-                    .removeIf(answer -> !studentEmail.equals(answer.getStudent().getEmail()));
+                    .removeIf(answer -> !studentUsername.equals(answer.getStudent().getUsername()));
 
             return QuizResponseDTO.builder()
                     .quizzes(quizzes)

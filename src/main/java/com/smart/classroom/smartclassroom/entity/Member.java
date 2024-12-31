@@ -17,9 +17,13 @@ import lombok.Setter;
 public abstract class Member {
 
     @Id
+    String username;
+
+    String phone;
+
     String email;
 
-    String name;
+    String profileName;
 
     @JsonIgnore
     String password;

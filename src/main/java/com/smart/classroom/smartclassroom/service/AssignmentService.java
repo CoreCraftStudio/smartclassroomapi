@@ -5,10 +5,10 @@ import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
 
 public interface AssignmentService {
 
-    AssignmentResponseDTO createAssignment(String teacherEmail, AssignmentRequestDTO assignmentRequestDTO);
+    AssignmentResponseDTO createAssignment(String teacherUsername, AssignmentRequestDTO assignmentRequestDTO);
 
-    AssignmentResponseDTO viewAssignments(String email, String type, Long classroomId);
+    AssignmentResponseDTO viewAssignments(String username, String type, Long classroomId);
 
-    AssignmentResponseDTO deleteAssignment(String email, Long classroomId, Long assignmentId);
+    AssignmentResponseDTO deleteAssignment(String teacherUsername, Long classroomId, Long assignmentId);
 
 }

@@ -19,18 +19,18 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Member> optionalMember = userRepository.findByEmail(username);
-        String type = userRepository.findTypeByEmail(username);
+        Optional<Member> optionalMember = userRepository.findByUsername(username);
+        String type = userRepository.findTypeByUsername(username);
         if (optionalMember.isPresent()) {
             Member member = optionalMember.get();
             return User.builder()
-                    .username(member.getEmail())
+                    .username(member.getUsername())
                     .password(member.getPassword())
                     .roles(type)
                     .authorities(type)
                     .build();
         } else {
-            throw new UsernameNotFoundException("No user for given email");
+            throw new UsernameNotFoundException("No user for given username");
         }
     }
 

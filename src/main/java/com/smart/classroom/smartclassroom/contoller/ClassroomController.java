@@ -33,24 +33,24 @@ public class ClassroomController {
 
 
     @PutMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO addStudent(@RequestParam String studentEmail, @PathVariable Long classroomId) {
+    public StudentResponseDTO addStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return classroomService.addStudent(user.getUsername(), studentEmail, classroomId);
+        return classroomService.addStudent(user.getUsername(), studentUsername, classroomId);
     }
 
     @DeleteMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO dropStudent(@RequestParam String studentEmail, @PathVariable Long classroomId) {
+    public StudentResponseDTO dropStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return classroomService.dropStudent(user.getUsername(), studentEmail, classroomId);
+        return classroomService.dropStudent(user.getUsername(), studentUsername, classroomId);
     }
 
     @PatchMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO updateParent(@PathVariable String studentEmail, @RequestParam(required = false) String parentEmail, @PathVariable Long classroomId) {
+    public StudentResponseDTO updateParent(@PathVariable String studentUsername, @RequestParam(required = false) String parentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return classroomService.updateParent(user.getUsername(), studentEmail, parentEmail, classroomId);
+        return classroomService.updateParent(user.getUsername(), studentUsername, parentUsername, classroomId);
     }
 
 }

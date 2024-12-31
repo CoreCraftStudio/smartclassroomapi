@@ -30,11 +30,11 @@ public class AssignmentServiceImpl implements AssignmentService {
     private final ClassroomRepository classroomRepository;
 
     @Override
-    public AssignmentResponseDTO createAssignment(String teacherEmail, AssignmentRequestDTO assignmentRequestDTO) {
+    public AssignmentResponseDTO createAssignment(String teacherUsername, AssignmentRequestDTO assignmentRequestDTO) {
         Long classroomId = assignmentRequestDTO.getClassroomId();
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
-            Optional<Member> optionalTeacher = userRepository.findByEmail(teacherEmail);
+            Optional<Member> optionalTeacher = userRepository.findByUsername(teacherUsername);
             if (optionalTeacher.isPresent()) {
                 Teacher teacher = (Teacher) optionalTeacher.get();
                 if (teacher.getClassrooms().stream().map(Classroom::getId).collect(Collectors.toSet()).contains(classroomId)) {
@@ -57,7 +57,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                 }
 
             } else {
-                throw new ResourceNotFoundException("No teacher for given email");
+                throw new ResourceNotFoundException("No teacher for given username");
             }
         } else {
             throw new ResourceNotFoundException("No classroom for given classroom id");
@@ -65,13 +65,13 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public AssignmentResponseDTO viewAssignments(String email, String type, Long classroomId) {
+    public AssignmentResponseDTO viewAssignments(String username, String type, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Set<Assignment> assignments = classroom.getAssignments();
             if (TEACHER.equals(type)) {
-                if (email.equals(classroom.getTeacher().getEmail())) {
+                if (username.equals(classroom.getTeacher().getUsername())) {
                     return AssignmentResponseDTO.builder()
                             .assignments(assignments)
                             .build();
@@ -79,12 +79,12 @@ public class AssignmentServiceImpl implements AssignmentService {
                     throw new AuthorizationException("Teacher not allow to view the assignment");
                 }
             } else {
-                if (classroom.getStudents().stream().map(Student::getEmail).collect(Collectors.toSet()).contains(email)) {
+                if (classroom.getStudents().stream().map(Student::getUsername).collect(Collectors.toSet()).contains(username)) {
                     assignments.stream()
                             .map(Assignment::getSubmissions)
                             .flatMap(Set::stream)
                             .collect(Collectors.toSet())
-                            .removeIf(submission -> !email.equals(submission.getStudent().getEmail()));
+                            .removeIf(submission -> !username.equals(submission.getStudent().getUsername()));
 
                     return AssignmentResponseDTO.builder()
                             .assignments(assignments)
@@ -99,10 +99,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public AssignmentResponseDTO deleteAssignment(String email, Long classroomId, Long assignmentId) {
+    public AssignmentResponseDTO deleteAssignment(String teacherUsername, Long classroomId, Long assignmentId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
-            Optional<Member> optionalTeacher = userRepository.findByEmail(email);
+            Optional<Member> optionalTeacher = userRepository.findByUsername(teacherUsername);
             if (optionalTeacher.isPresent()) {
                 Teacher teacher = (Teacher) optionalTeacher.get();
                 if (teacher.getClassrooms().stream().map(Classroom::getId).collect(Collectors.toSet()).contains(classroomId)) {
@@ -121,7 +121,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                 }
 
             } else {
-                throw new ResourceNotFoundException("No teacher for given email");
+                throw new ResourceNotFoundException("No teacher for given username");
             }
         } else {
             throw new ResourceNotFoundException("No classroom for given id");

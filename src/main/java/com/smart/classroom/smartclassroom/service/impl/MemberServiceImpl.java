@@ -30,15 +30,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponseDTO createMember(MemberRequestDTO memberRequestDTO) {
-        Optional<Member> optionalUser = userRepository.findByEmail(memberRequestDTO.getEmail());
+        Optional<Member> optionalUser = userRepository.findByUsername(memberRequestDTO.getUsername());
         if (optionalUser.isEmpty()) {
             MemberResponseDTO.MemberResponseDTOBuilder memberResponseDTOBuilder = MemberResponseDTO.builder();
             String encodedPassword = passwordEncoder.encode(memberRequestDTO.getPassword());
             userRepository.save(switch (memberRequestDTO.getType()) {
                         case TEACHER -> {
                             Teacher teacher = Teacher.builder()
+                                    .username(memberRequestDTO.getUsername())
+                                    .phone(memberRequestDTO.getPhone())
                                     .email(memberRequestDTO.getEmail())
-                                    .name(memberRequestDTO.getName())
+                                    .profileName(memberRequestDTO.getProfileName())
                                     .password(encodedPassword)
                                     .freemium(Boolean.FALSE)
                                     .build();
@@ -47,8 +49,10 @@ public class MemberServiceImpl implements MemberService {
                         }
                         case STUDENT -> {
                             Student student = Student.builder()
+                                    .username(memberRequestDTO.getUsername())
+                                    .phone(memberRequestDTO.getPhone())
                                     .email(memberRequestDTO.getEmail())
-                                    .name(memberRequestDTO.getName())
+                                    .profileName(memberRequestDTO.getProfileName())
                                     .password(encodedPassword)
                                     .freemium(Boolean.FALSE)
                                     .build();
@@ -57,8 +61,10 @@ public class MemberServiceImpl implements MemberService {
                         }
                         default -> {
                             Parent parent = Parent.builder()
+                                    .username(memberRequestDTO.getUsername())
+                                    .phone(memberRequestDTO.getPhone())
                                     .email(memberRequestDTO.getEmail())
-                                    .name(memberRequestDTO.getName())
+                                    .profileName(memberRequestDTO.getProfileName())
                                     .password(encodedPassword)
                                     .freemium(Boolean.FALSE)
                                     .build();
@@ -78,11 +84,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponseDTO viewMember(MemberRequestDTO memberRequestDTO) {
-        Optional<Member> optionalUser = userRepository.findByEmail(memberRequestDTO.getEmail());
+        Optional<Member> optionalUser = userRepository.findByUsername(memberRequestDTO.getUsername());
         if (optionalUser.isPresent()) {
             Member member = optionalUser.get();
             if (passwordEncoder.matches(memberRequestDTO.getPassword(), member.getPassword())) {
-                String type = userRepository.findTypeByEmail(memberRequestDTO.getEmail());
+                String type = userRepository.findTypeByUsername(memberRequestDTO.getUsername());
                 return MemberResponseDTO.builder()
                         .member(member)
                         .type(type)

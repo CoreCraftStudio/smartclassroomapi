@@ -5,5 +5,5 @@ import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
 
 public interface AnswerService {
 
-    QuizResponseDTO createAnswerSet(String studentEmail, AnswerSetRequestDTO answerSetRequestDTO);
+    QuizResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO);
 }

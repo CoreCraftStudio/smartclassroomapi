@@ -5,11 +5,11 @@ import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
 
 public interface QuizService {
 
-    QuizResponseDTO createQuiz(String teacherEmail, QuizRequestDTO quizRequestDTO);
+    QuizResponseDTO createQuiz(String teacherUsername, QuizRequestDTO quizRequestDTO);
 
-    QuizResponseDTO deleteQuiz(String teacherEmail, Long quizId);
+    QuizResponseDTO deleteQuiz(String teacherUsername, Long quizId);
 
-    QuizResponseDTO viewQuizzes(String email, String type, Long classroomId);
+    QuizResponseDTO viewQuizzes(String username, String type, Long classroomId);
 
 
 }

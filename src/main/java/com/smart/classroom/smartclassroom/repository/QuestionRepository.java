@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query(value = "select type from Question where id = ?1", nativeQuery = true)
-    String findTypeById(Long email);
+    String findTypeById(Long id);
 }

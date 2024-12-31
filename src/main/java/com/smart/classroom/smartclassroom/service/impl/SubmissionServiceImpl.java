@@ -22,8 +22,8 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final AssignmentRepository assignmentRepository;
 
     @Override
-    public AssignmentResponseDTO createSubmission(String studentEmail, SubmissionRequestDTO submissionRequestDTO) {
-        Optional<Member> optionalStudent = userRepository.findByEmail(studentEmail);
+    public AssignmentResponseDTO createSubmission(String studentUsername, SubmissionRequestDTO submissionRequestDTO) {
+        Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
         Optional<Assignment> optionalAssignment = assignmentRepository.findById(submissionRequestDTO.getAssignmentId());
         if (optionalStudent.isPresent() && optionalAssignment.isPresent()) {
             Student student = (Student) optionalStudent.get();
@@ -46,11 +46,11 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public AssignmentResponseDTO deleteSubmission(String email, String classroomId, Long submissionId) {
+    public AssignmentResponseDTO deleteSubmission(String studentUsername, String classroomId, Long submissionId) {
         Optional<Submission> optionalSubmission = submissionRepository.findById(submissionId);
         if (optionalSubmission.isPresent()) {
             Submission submission = optionalSubmission.get();
-            if (submission.getStudent().getEmail().equals(email)) {
+            if (submission.getStudent().getUsername().equals(studentUsername)) {
                 Classroom classroom = submission.getAssignment().getClassroom();
                 assignmentRepository.deleteById(submissionId);
                 return AssignmentResponseDTO.builder()

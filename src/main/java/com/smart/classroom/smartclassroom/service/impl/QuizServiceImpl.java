@@ -31,11 +31,11 @@ public class QuizServiceImpl implements QuizService {
     private final QuestionRepository questionRepository;
 
     @Override
-    public QuizResponseDTO createQuiz(String teacherEmail, QuizRequestDTO quizRequestDTO) {
+    public QuizResponseDTO createQuiz(String teacherUsername, QuizRequestDTO quizRequestDTO) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(quizRequestDTO.getClassroomId());
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
-            if (teacherEmail.equals(classroom.getTeacher().getEmail())) {
+            if (teacherUsername.equals(classroom.getTeacher().getUsername())) {
                 Quiz quiz = quizRepository.save(Quiz.builder()
                         .classroom(classroom)
                         .name(quizRequestDTO.getName())
@@ -88,12 +88,12 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizResponseDTO deleteQuiz(String teacherEmail, Long quizId) {
+    public QuizResponseDTO deleteQuiz(String teacherUsername, Long quizId) {
         Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
         if (optionalQuiz.isPresent()) {
             Quiz quiz = optionalQuiz.get();
             Classroom classroom = quiz.getClassroom();
-            if (teacherEmail.equals(classroom.getTeacher().getEmail())) {
+            if (teacherUsername.equals(classroom.getTeacher().getUsername())) {
                 quizRepository.deleteById(quizId);
                 Set<Quiz> quizzes = classroom.getQuizzes();
 
@@ -115,12 +115,12 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public QuizResponseDTO viewQuizzes(String email, String type, Long classroomId) {
+    public QuizResponseDTO viewQuizzes(String username, String type, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             if (TEACHER.equals(type)) {
-                if (email.equals(classroom.getTeacher().getEmail())) {
+                if (username.equals(classroom.getTeacher().getUsername())) {
                     Set<Quiz> quizzes = classroom.getQuizzes();
                     quizzes.stream()
                             .map(Quiz::getQuestions).
@@ -141,7 +141,7 @@ public class QuizServiceImpl implements QuizService {
                         .map(Question::getAnswers)
                         .flatMap(Set::stream)
                         .collect(Collectors.toSet())
-                        .removeIf(answer -> !email.equals(answer.getStudent().getEmail()));
+                        .removeIf(answer -> !username.equals(answer.getStudent().getUsername()));
 
                 return QuizResponseDTO.builder()
                         .quizzes(quizzes)

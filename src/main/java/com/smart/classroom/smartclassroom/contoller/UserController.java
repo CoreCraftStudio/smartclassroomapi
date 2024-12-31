@@ -25,7 +25,7 @@ public class UserController {
     @PostMapping("/auth")
     public MemberResponseDTO getUser(@RequestBody MemberRequestDTO memberRequestDTO) {
         MemberResponseDTO memberResponseDTO = memberService.viewMember(memberRequestDTO);
-        memberResponseDTO.setToken(authService.generateToken(memberRequestDTO.getEmail()));
+        memberResponseDTO.setToken(authService.generateToken(memberRequestDTO.getUsername()));
         return memberResponseDTO;
     }
 

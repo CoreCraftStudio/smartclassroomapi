@@ -21,8 +21,8 @@ public class Parent extends Member {
     Set<Student> students;
 
     @Builder
-    public Parent(String email, String name, String password, Boolean freemium, Set<Student> students) {
-        super(email, name, password, freemium);
+    public Parent(String username, String phone, String email, String profileName, String password, Boolean freemium, Set<Student> students) {
+        super(username, phone, email, profileName, password, freemium);
         this.students = students;
     }
 }

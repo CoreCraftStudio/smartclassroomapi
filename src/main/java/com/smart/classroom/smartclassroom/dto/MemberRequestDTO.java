@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberRequestDTO {
 
-    String name;
+    String username;
+    String profileName;
     String email;
+    String phone;
     String type;
     String password;
 
