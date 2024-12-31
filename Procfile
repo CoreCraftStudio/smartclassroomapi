@@ -1,1 +1,1 @@
-web: java -jar build/libs/smartclassroom-1.0.0.jar
+web: java -jar --server.port=$PORT build/libs/smartclassroom-1.0.0.jar
