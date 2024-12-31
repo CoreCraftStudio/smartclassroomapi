@@ -1,26 +1,17 @@
 package com.smart.classroom.smartclassroom.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.smart.classroom.smartclassroom.entity.Assignment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AssignmentResponseDTO {
-
-    @JsonProperty("assignment_id")
-    Long id;
-
-    @JsonProperty("name")
-    String name;
-
-    @JsonProperty("description")
-    String description;
-
-    @JsonProperty("attachment_id")
-    Long attachmentId;
+    Set<Assignment> assignments;
 }

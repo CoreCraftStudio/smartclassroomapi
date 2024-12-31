@@ -6,14 +6,14 @@ import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
 
 public interface ClassroomService {
 
-    ClassroomResponseDTO createClassroom(ClassroomRequestDTO classroomRequestDTO);
+    ClassroomResponseDTO createClassroom(String teacherUsername, ClassroomRequestDTO classroomRequestDTO);
 
-    ClassroomResponseDTO deleteClassroom(String email, Long classroomId);
+    ClassroomResponseDTO deleteClassroom(String teacherUsername, Long classroomId);
 
-    StudentResponseDTO addStudent(String teacherEmail, String studentEmail, Long classroomId);
+    StudentResponseDTO addStudent(String teacherUsername, String studentUsername, Long classroomId);
 
-    StudentResponseDTO dropStudent(String teacherEmail, String studentEmail, Long classroomId);
+    StudentResponseDTO dropStudent(String teacherUsername, String studentUsername, Long classroomId);
 
-    StudentResponseDTO updateParent(String teacherEmail, String studentEmail, String parentEmail, Long classroomId);
+    StudentResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId);
 
 }

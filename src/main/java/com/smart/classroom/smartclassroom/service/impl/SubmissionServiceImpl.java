@@ -1,12 +1,9 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
+import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
 import com.smart.classroom.smartclassroom.dto.SubmissionRequestDTO;
-import com.smart.classroom.smartclassroom.dto.SubmissionResponseDTO;
-import com.smart.classroom.smartclassroom.entity.Assignment;
-import com.smart.classroom.smartclassroom.entity.Student;
-import com.smart.classroom.smartclassroom.entity.Submission;
-import com.smart.classroom.smartclassroom.entity.User;
-import com.smart.classroom.smartclassroom.exception.ValidationException;
+import com.smart.classroom.smartclassroom.entity.*;
+import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
 import com.smart.classroom.smartclassroom.repository.AssignmentRepository;
 import com.smart.classroom.smartclassroom.repository.SubmissionRepository;
 import com.smart.classroom.smartclassroom.repository.UserRepository;
@@ -25,48 +22,46 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final AssignmentRepository assignmentRepository;
 
     @Override
-    public SubmissionResponseDTO createSubmission(SubmissionRequestDTO submissionRequestDTO) {
+    public AssignmentResponseDTO createSubmission(String studentUsername, SubmissionRequestDTO submissionRequestDTO) {
+        Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
         Optional<Assignment> optionalAssignment = assignmentRepository.findById(submissionRequestDTO.getAssignmentId());
-        if (optionalAssignment.isPresent()) {
-            Optional<User> userOptional = userRepository.findByEmail(submissionRequestDTO.getEmail());
-            if (userOptional.isPresent()) {
-                Student student = (Student) userOptional.get();
-                Submission submission = submissionRepository.save(Submission.builder()
-                        .attachmentId(submissionRequestDTO.getAttachmentId())
-                        .student(student)
-                        .build());
+        if (optionalStudent.isPresent() && optionalAssignment.isPresent()) {
+            Student student = (Student) optionalStudent.get();
+            Assignment assignment = optionalAssignment.get();
+            Submission submission = submissionRepository.save(Submission.builder()
+                    .assignment(assignment)
+                    .description(submissionRequestDTO.getDescription())
+                    .attachmentId(submissionRequestDTO.getAttachmentId())
+                    .student(student)
+                    .build());
 
-                Assignment assignment = optionalAssignment.get();
-                assignment.getSubmissions().add(submission);
-                assignmentRepository.save(assignment);
-                return SubmissionResponseDTO.builder()
-                        .id(submission.getId())
-                        .build();
-
-            } else {
-                throw new ValidationException("No Student for given email");
-            }
+            submissionRepository.save(submission);
+            Classroom classroom = assignment.getClassroom();
+            return AssignmentResponseDTO.builder()
+                    .assignments(classroom.getAssignments())
+                    .build();
         } else {
-            throw new ValidationException("No assignment for given id");
+            throw new ResourceNotFoundException("No assignment for given id");
         }
     }
 
     @Override
-    public SubmissionResponseDTO deleteSubmission(String email, Long submissionId) {
+    public AssignmentResponseDTO deleteSubmission(String studentUsername, String classroomId, Long submissionId) {
         Optional<Submission> optionalSubmission = submissionRepository.findById(submissionId);
         if (optionalSubmission.isPresent()) {
             Submission submission = optionalSubmission.get();
-            if (submission.getStudent().getEmail().equals(email)) {
+            if (submission.getStudent().getUsername().equals(studentUsername)) {
+                Classroom classroom = submission.getAssignment().getClassroom();
                 assignmentRepository.deleteById(submissionId);
-                return SubmissionResponseDTO.builder()
-                        .id(submission.getId())
+                return AssignmentResponseDTO.builder()
+                        .assignments(classroom.getAssignments())
                         .build();
             } else {
-                throw new ValidationException("Student not allow to delete the submission");
+                throw new ResourceNotFoundException("Student not allow to delete the submission");
             }
 
         } else {
-            throw new ValidationException("No Submission for given id");
+            throw new ResourceNotFoundException("No Submission for given id");
         }
     }
 

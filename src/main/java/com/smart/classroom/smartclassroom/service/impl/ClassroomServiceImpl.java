@@ -24,8 +24,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     private final UserRepository userRepository;
 
     @Override
-    public ClassroomResponseDTO createClassroom(ClassroomRequestDTO classroomRequestDTO) {
-        Optional<User> optionalTeacher = userRepository.findByEmail(classroomRequestDTO.getEmail());
+    public ClassroomResponseDTO createClassroom(String teacherUsername, ClassroomRequestDTO classroomRequestDTO) {
+        Optional<Member> optionalTeacher = userRepository.findByUsername(teacherUsername);
         if (optionalTeacher.isPresent()) {
             Teacher teacher = (Teacher) optionalTeacher.get();
             classroomRepository.save(Classroom.builder()
@@ -37,17 +37,17 @@ public class ClassroomServiceImpl implements ClassroomService {
                     .classrooms(teacher.getClassrooms())
                     .build();
         } else {
-            throw new ResourceNotFoundException("No teacher for given email");
+            throw new ResourceNotFoundException("No teacher for given username");
         }
     }
 
     @Override
-    public ClassroomResponseDTO deleteClassroom(String teacherEmail, Long classroomId) {
+    public ClassroomResponseDTO deleteClassroom(String teacherUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
-            if (teacherEmail.equals(teacher.getEmail())) {
+            if (teacherUsername.equals(teacher.getUsername())) {
                 classroomRepository.deleteById(classroomId);
                 return ClassroomResponseDTO.builder()
                         .classrooms(teacher.getClassrooms())
@@ -61,13 +61,13 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO addStudent(String teacherEmail, String studentEmail, Long classroomId) {
+    public StudentResponseDTO addStudent(String teacherUsername, String studentUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
-            if (teacherEmail.equals(teacher.getEmail())) {
-                Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+            if (teacherUsername.equals(teacher.getUsername())) {
+                Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
                 if (optionalStudent.isPresent()) {
                     Student student = (Student) optionalStudent.get();
                     Set<Student> students = classroom.getStudents();
@@ -78,7 +78,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                             .students(classroom.getStudents())
                             .build();
                 } else {
-                    throw new ResourceNotFoundException("No student for given email");
+                    throw new ResourceNotFoundException("No student for given username");
                 }
             } else {
                 throw new AuthorizationException("Teacher not allow to add a student to the classroom");
@@ -90,23 +90,23 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO dropStudent(String teacherEmail, String studentEmail, Long classroomId) {
+    public StudentResponseDTO dropStudent(String teacherUsername, String studentUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
-            if (teacherEmail.equals(teacher.getEmail())) {
-                Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+            if (teacherUsername.equals(teacher.getUsername())) {
+                Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
                 if (optionalStudent.isPresent()) {
                     Set<Student> students = classroom.getStudents();
-                    students.removeIf(student -> studentEmail.equals(student.getEmail()));
+                    students.removeIf(student -> studentUsername.equals(student.getUsername()));
                     classroom.setStudents(students);
                     classroomRepository.save(classroom);
                     return StudentResponseDTO.builder()
                             .students(classroom.getStudents())
                             .build();
                 } else {
-                    throw new ResourceNotFoundException("No student for given email");
+                    throw new ResourceNotFoundException("No student for given username");
                 }
             } else {
                 throw new AuthorizationException("Teacher not allow to drop a student from the classroom");
@@ -117,24 +117,24 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO updateParent(String teacherEmail, String studentEmail, String parentEmail, Long classroomId) {
+    public StudentResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
-            if (teacherEmail.equals(teacher.getEmail())) {
-                Optional<User> optionalStudent = userRepository.findByEmail(studentEmail);
+            if (teacherUsername.equals(teacher.getUsername())) {
+                Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
                 if (optionalStudent.isPresent()) {
                     Student student = (Student) optionalStudent.get();
-                    if (Objects.isNull(parentEmail)) {
+                    if (Objects.isNull(parentUsername)) {
                         student.setParent(null);
                     } else {
-                        Optional<User> optionalParent = userRepository.findByEmail(parentEmail);
+                        Optional<Member> optionalParent = userRepository.findByUsername(parentUsername);
                         if (optionalParent.isPresent()) {
                             Parent parent = (Parent) optionalParent.get();
                             student.setParent(parent);
                         } else {
-                            throw new ResourceNotFoundException("No parent for given email");
+                            throw new ResourceNotFoundException("No parent for given username");
                         }
                     }
                     userRepository.save(student);
@@ -142,7 +142,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                             .students(classroom.getStudents())
                             .build();
                 } else {
-                    throw new ResourceNotFoundException("No student for given email");
+                    throw new ResourceNotFoundException("No student for given username");
                 }
             } else {
                 throw new AuthorizationException("Teacher not allow to add a parent to the student");

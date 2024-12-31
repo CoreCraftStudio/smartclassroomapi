@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AssignmentRequestDTO {
     Long classroomId;
-    String email;
     String name;
     String description;
     Long attachmentId;

@@ -14,15 +14,15 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Parent extends User {
+public class Parent extends Member {
 
     @OneToMany(mappedBy = "parent")
     @JsonIgnore
     Set<Student> students;
 
     @Builder
-    public Parent(String email, String name, String password, Set<Student> students) {
-        super(email, name, password);
+    public Parent(String username, String phone, String email, String profileName, String password, Boolean freemium, Set<Student> students) {
+        super(username, phone, email, profileName, password, freemium);
         this.students = students;
     }
 }

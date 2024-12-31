@@ -18,6 +18,8 @@ public class Submission {
     @JoinColumn(name = "user_id", nullable = false)
     Student student;
 
+    String description;
+
     Long attachmentId;
 
     Double mark;

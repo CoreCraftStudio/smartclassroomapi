@@ -9,6 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmissionResponseDTO {
-    Long id;
+public class MemberRequestDTO {
+
+    String username;
+    String profileName;
+    String email;
+    String phone;
+    String type;
+    String password;
+
 }

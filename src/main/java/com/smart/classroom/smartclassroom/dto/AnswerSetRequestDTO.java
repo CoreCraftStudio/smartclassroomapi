@@ -12,8 +12,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnswerSetRequestDTO {
-
-    Long classroomId;
-    String email;
+    Long quizId;
     Set<AnswerRequestDTO> answerSet;
 }

@@ -10,8 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClassroomRequestDTO {
-
-    String email;
     String name;
-
 }

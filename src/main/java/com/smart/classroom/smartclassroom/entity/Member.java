@@ -10,18 +10,24 @@ import lombok.Setter;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type")
-@Table(name = "member")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public abstract class User {
+public abstract class Member {
 
     @Id
+    String username;
+
+    String phone;
+
     String email;
 
-    String name;
+    String profileName;
 
     @JsonIgnore
     String password;
+
+    Boolean freemium;
+
 }
