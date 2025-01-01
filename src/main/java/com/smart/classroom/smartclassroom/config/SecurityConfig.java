@@ -2,6 +2,7 @@ package com.smart.classroom.smartclassroom.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +26,8 @@ import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEAC
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChainProd(UrlBasedCorsConfigurationSource corsConfigurationSource, AuthFilter authFilter, HttpSecurity http) throws Exception {
+    @Profile("prod")
+    public SecurityFilterChain filterChainProd(UrlBasedCorsConfigurationSource corsConfigurationSource, AuthFilterProd authFilterProd, HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
@@ -39,11 +41,11 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.DELETE, "/quizzes").hasRole(TEACHER)
 
                                 .anyRequest().authenticated())
-                .cors(c -> c.configurationSource(corsConfigurationSource))
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authFilterProd, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -61,6 +63,22 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    @Profile("non-prod")
+    public SecurityFilterChain filterChainNonProd(UrlBasedCorsConfigurationSource corsConfigurationSource, AuthFilterNonProd authFilterNonProd, HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        authorizationManagerRequestMatcherRegistry
+                                .anyRequest().permitAll())
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(authFilterNonProd, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
 }
