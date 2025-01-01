@@ -12,6 +12,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.STUDENT;
 import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEACHER;
@@ -21,7 +25,7 @@ import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEAC
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChainProd(AuthFilter authFilter, HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChainProd(UrlBasedCorsConfigurationSource corsConfigurationSource, AuthFilter authFilter, HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
@@ -35,7 +39,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.DELETE, "/quizzes").hasRole(TEACHER)
 
                                 .anyRequest().authenticated())
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(c -> c.configurationSource(corsConfigurationSource))
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -47,6 +51,16 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:8081"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
