@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +20,8 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class AuthFilter extends OncePerRequestFilter {
+@Profile("prod")
+public class AuthFilterProd extends OncePerRequestFilter {
 
     private final AuthService authService;
     private final UserDetailsService userDetailsService;
