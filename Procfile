@@ -1,1 +1,1 @@
-web: java -jar -Dserver.port=$PORT build/libs/smartclassroom-1.0.0.jar
+web: java -jar -Dspring.profiles.active=$PROFILE -Dserver.port=$PORT build/libs/smartclassroom-1.0.0.jar
