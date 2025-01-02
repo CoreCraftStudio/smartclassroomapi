@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEACHER;
+
 @Service
 @RequiredArgsConstructor
 public class ClassroomServiceImpl implements ClassroomService {
@@ -149,6 +151,26 @@ public class ClassroomServiceImpl implements ClassroomService {
             }
         } else {
             throw new ResourceNotFoundException("No classroom for given classroom id");
+        }
+    }
+
+    @Override
+    public ClassroomResponseDTO viewClassrooms(String username, String type) {
+        Optional<Member> optionalMember = userRepository.findByUsername(username);
+        if (optionalMember.isPresent()) {
+            if (TEACHER.equals(type)) {
+                Teacher teacher = (Teacher) optionalMember.get();
+                return ClassroomResponseDTO.builder()
+                        .classrooms(teacher.getClassrooms())
+                        .build();
+            } else {
+                Student student = (Student) optionalMember.get();
+                return ClassroomResponseDTO.builder()
+                        .classrooms(student.getClassrooms())
+                        .build();
+            }
+        } else {
+            throw new ResourceNotFoundException("No user for given username");
         }
     }
 }
