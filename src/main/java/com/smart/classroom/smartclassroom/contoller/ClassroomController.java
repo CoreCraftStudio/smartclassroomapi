@@ -7,9 +7,12 @@ import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
 import com.smart.classroom.smartclassroom.service.ClassroomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +54,15 @@ public class ClassroomController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.updateParent(user.getUsername(), studentUsername, parentUsername, classroomId);
+    }
+
+    @GetMapping("/classrooms")
+    public ClassroomResponseDTO viewClassroom() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
+        String type = optionalAuthority.map(GrantedAuthority::getAuthority).orElse(null);
+        return classroomService.viewClassrooms(user.getUsername(), type);
     }
 
 }

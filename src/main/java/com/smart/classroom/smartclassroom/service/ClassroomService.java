@@ -16,4 +16,6 @@ public interface ClassroomService {
 
     StudentResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId);
 
+    ClassroomResponseDTO viewClassrooms(String username, String type);
+
 }
