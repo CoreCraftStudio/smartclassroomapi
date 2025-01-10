@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.smart.classroom.smartclassroom.util.Constant.ExceptionMessage.NO_CLASSROOM_FOR_ID;
+import static com.smart.classroom.smartclassroom.util.Constant.ExceptionMessage.NO_STUDENT_FOR_USERNAME;
 import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEACHER;
 
 @Service
@@ -58,7 +60,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 throw new AuthorizationException("Teacher not allow to delete the classroom");
             }
         } else {
-            throw new ResourceNotFoundException("No classroom for given classroom id");
+            throw new ResourceNotFoundException(NO_CLASSROOM_FOR_ID);
         }
     }
 
@@ -80,14 +82,14 @@ public class ClassroomServiceImpl implements ClassroomService {
                             .students(classroom.getStudents())
                             .build();
                 } else {
-                    throw new ResourceNotFoundException("No student for given username");
+                    throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
                 }
             } else {
                 throw new AuthorizationException("Teacher not allow to add a student to the classroom");
             }
 
         } else {
-            throw new ResourceNotFoundException("No classroom for given classroom id");
+            throw new ResourceNotFoundException(NO_CLASSROOM_FOR_ID);
         }
     }
 
@@ -108,13 +110,13 @@ public class ClassroomServiceImpl implements ClassroomService {
                             .students(classroom.getStudents())
                             .build();
                 } else {
-                    throw new ResourceNotFoundException("No student for given username");
+                    throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
                 }
             } else {
                 throw new AuthorizationException("Teacher not allow to drop a student from the classroom");
             }
         } else {
-            throw new ResourceNotFoundException("No classroom for given classroom id");
+            throw new ResourceNotFoundException(NO_CLASSROOM_FOR_ID);
         }
     }
 
@@ -144,13 +146,13 @@ public class ClassroomServiceImpl implements ClassroomService {
                             .students(classroom.getStudents())
                             .build();
                 } else {
-                    throw new ResourceNotFoundException("No student for given username");
+                    throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
                 }
             } else {
                 throw new AuthorizationException("Teacher not allow to add a parent to the student");
             }
         } else {
-            throw new ResourceNotFoundException("No classroom for given classroom id");
+            throw new ResourceNotFoundException(NO_CLASSROOM_FOR_ID);
         }
     }
 

@@ -17,6 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.smart.classroom.smartclassroom.util.Constant.PATH.QUIZZES;
 import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.STUDENT;
 import static com.smart.classroom.smartclassroom.util.Constant.UserConstant.TEACHER;
 
@@ -35,9 +36,9 @@ public class SecurityConfig {
 
                                 .requestMatchers("/classrooms/**").hasAuthority(TEACHER)
 
-                                .requestMatchers(HttpMethod.PUT, "/quizzes").hasAuthority(STUDENT)
-                                .requestMatchers(HttpMethod.POST, "/quizzes").hasAuthority(TEACHER)
-                                .requestMatchers(HttpMethod.DELETE, "/quizzes").hasAuthority(TEACHER)
+                                .requestMatchers(HttpMethod.PUT, QUIZZES).hasAuthority(STUDENT)
+                                .requestMatchers(HttpMethod.POST, QUIZZES).hasAuthority(TEACHER)
+                                .requestMatchers(HttpMethod.DELETE, QUIZZES).hasAuthority(TEACHER)
 
                                 .anyRequest().authenticated())
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
