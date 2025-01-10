@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -42,7 +41,6 @@ public class SecurityConfig {
 
                                 .anyRequest().authenticated())
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilterProd, UsernamePasswordAuthenticationFilter.class);
@@ -74,7 +72,6 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry
                                 .anyRequest().permitAll())
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilterNonProd, UsernamePasswordAuthenticationFilter.class);
