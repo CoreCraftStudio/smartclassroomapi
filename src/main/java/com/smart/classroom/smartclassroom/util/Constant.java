@@ -25,5 +25,16 @@ public final class Constant {
         public static final int KEY_SIZE = 256;
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class ExceptionMessage {
+        public static final String NO_CLASSROOM_FOR_ID = "No classroom for given id";
+        public static final String NO_STUDENT_FOR_USERNAME = "No student for given username";
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class PATH {
+        public static final String QUIZZES = "/quizzes";
+    }
+
 
 }

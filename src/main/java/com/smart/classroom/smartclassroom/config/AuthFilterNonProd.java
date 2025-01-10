@@ -28,12 +28,15 @@ public class AuthFilterNonProd extends OncePerRequestFilter {
     @Value("${test.role}")
     private String role;
 
+    @Value("${test.password}")
+    private String password;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         UserDetails userDetails = User.builder()
                 .username(username)
-                .password("password")
+                .password(password)
                 .roles(role)
                 .authorities(role)
                 .build();
