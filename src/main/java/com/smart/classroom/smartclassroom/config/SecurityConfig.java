@@ -33,11 +33,11 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
 
-                                .requestMatchers("/classrooms/**").hasRole(TEACHER)
+                                .requestMatchers("/classrooms/**").hasAuthority(TEACHER)
 
-                                .requestMatchers(HttpMethod.PUT, "/quizzes").hasRole(STUDENT)
-                                .requestMatchers(HttpMethod.POST, "/quizzes").hasRole(TEACHER)
-                                .requestMatchers(HttpMethod.DELETE, "/quizzes").hasRole(TEACHER)
+                                .requestMatchers(HttpMethod.PUT, "/quizzes").hasAuthority(STUDENT)
+                                .requestMatchers(HttpMethod.POST, "/quizzes").hasAuthority(TEACHER)
+                                .requestMatchers(HttpMethod.DELETE, "/quizzes").hasAuthority(TEACHER)
 
                                 .anyRequest().authenticated())
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
