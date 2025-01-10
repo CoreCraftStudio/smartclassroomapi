@@ -41,6 +41,8 @@ public class SecurityConfig {
 
                                 .anyRequest().authenticated())
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilterProd, UsernamePasswordAuthenticationFilter.class);
@@ -72,6 +74,8 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry
                                 .anyRequest().permitAll())
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilterNonProd, UsernamePasswordAuthenticationFilter.class);
