@@ -33,7 +33,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/assignments")
-    public AssignmentResponseDTO viewAssignment(@RequestParam Long classroomId) {
+    public AssignmentResponseDTO viewAssignments(@RequestParam Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();

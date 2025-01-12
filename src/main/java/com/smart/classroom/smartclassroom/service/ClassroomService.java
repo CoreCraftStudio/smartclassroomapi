@@ -18,4 +18,6 @@ public interface ClassroomService {
 
     ClassroomResponseDTO viewClassrooms(String username, String type);
 
+    StudentResponseDTO viewStudents(String teacherUsername, Long classroomId);
+
 }

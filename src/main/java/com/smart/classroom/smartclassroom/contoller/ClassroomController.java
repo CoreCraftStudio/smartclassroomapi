@@ -21,7 +21,7 @@ public class ClassroomController {
     private final ClassroomService classroomService;
 
     @PostMapping("/classrooms")
-    public ClassroomResponseDTO setClassroom(@RequestBody ClassroomRequestDTO classroomRequestDTO) {
+    public ClassroomResponseDTO createClassroom(@RequestBody ClassroomRequestDTO classroomRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.createClassroom(user.getUsername(), classroomRequestDTO);
@@ -50,19 +50,26 @@ public class ClassroomController {
     }
 
     @PatchMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO updateParent(@PathVariable String studentUsername, @RequestParam(required = false) String parentUsername, @PathVariable Long classroomId) {
+    public StudentResponseDTO updateParent(@RequestParam String studentUsername, @RequestParam(required = false) String parentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.updateParent(user.getUsername(), studentUsername, parentUsername, classroomId);
     }
 
     @GetMapping("/classrooms")
-    public ClassroomResponseDTO viewClassroom() {
+    public ClassroomResponseDTO viewClassrooms() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
         String type = optionalAuthority.map(GrantedAuthority::getAuthority).orElse(null);
         return classroomService.viewClassrooms(user.getUsername(), type);
+    }
+
+    @GetMapping("/classrooms/{classroomId}")
+    public StudentResponseDTO viewStudents(@PathVariable Long classroomId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return classroomService.viewStudents(user.getUsername(), classroomId);
     }
 
 }
