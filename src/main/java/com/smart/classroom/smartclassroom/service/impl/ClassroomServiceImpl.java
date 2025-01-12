@@ -175,4 +175,23 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new ResourceNotFoundException("No user for given username");
         }
     }
+
+    @Override
+    public StudentResponseDTO viewStudents(String teacherUsername, Long classroomId) {
+        Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
+        if (optionalClassroom.isPresent()) {
+            Classroom classroom = optionalClassroom.get();
+            Teacher teacher = classroom.getTeacher();
+            if (teacherUsername.equals(teacher.getUsername())) {
+                return StudentResponseDTO.builder()
+                        .students(classroom.getStudents())
+                        .build();
+            } else {
+                throw new AuthorizationException("Teacher not allow to add a student to the classroom");
+            }
+
+        } else {
+            throw new ResourceNotFoundException(NO_CLASSROOM_FOR_ID);
+        }
+    }
 }

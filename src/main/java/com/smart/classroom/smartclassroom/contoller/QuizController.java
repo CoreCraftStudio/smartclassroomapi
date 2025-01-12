@@ -43,7 +43,7 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes")
-    public QuizResponseDTO getQuizzes(@RequestParam Long classroomId) {
+    public QuizResponseDTO viewQuizzes(@RequestParam Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();

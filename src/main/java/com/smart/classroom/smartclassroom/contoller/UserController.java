@@ -18,12 +18,12 @@ public class UserController {
     private final AuthService authService;
 
     @PostMapping("/user")
-    public MemberResponseDTO setUser(@RequestBody MemberRequestDTO memberRequestDTO) {
+    public MemberResponseDTO createUser(@RequestBody MemberRequestDTO memberRequestDTO) {
         return memberService.createMember(memberRequestDTO);
     }
 
     @PostMapping("/auth")
-    public MemberResponseDTO getUser(@RequestBody MemberRequestDTO memberRequestDTO) {
+    public MemberResponseDTO viewUser(@RequestBody MemberRequestDTO memberRequestDTO) {
         MemberResponseDTO memberResponseDTO = memberService.viewMember(memberRequestDTO);
         memberResponseDTO.setToken(authService.generateToken(memberRequestDTO.getUsername()));
         return memberResponseDTO;
