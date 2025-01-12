@@ -17,6 +17,7 @@ import java.util.Set;
 public class Student extends Member {
 
     @ManyToMany(mappedBy = "students")
+    @JsonIgnore
     Set<Classroom> classrooms;
 
     @ManyToOne
