@@ -14,6 +14,7 @@ import java.util.Set;
 public class QuizDTO {
     Long id;
     String name;
+    String description;
     Set<QuestionDTO> questions;
     Double totalMark;
     Double maxMarks;

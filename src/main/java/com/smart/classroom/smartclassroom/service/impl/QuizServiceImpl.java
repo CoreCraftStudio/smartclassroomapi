@@ -133,6 +133,7 @@ public class QuizServiceImpl implements QuizService {
                     Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                     q -> QuizDTO.builder()
                                             .name(q.getName())
+                                            .description(q.getDescription())
                                             .build()
                             )
                             .collect(Collectors.toSet());
@@ -150,6 +151,7 @@ public class QuizServiceImpl implements QuizService {
                     Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                     q -> QuizDTO.builder()
                                             .name(q.getName())
+                                            .description(q.getDescription())
                                             .build()
                             )
                             .collect(Collectors.toSet());
@@ -176,6 +178,7 @@ public class QuizServiceImpl implements QuizService {
                 if (username.equals(quiz.getClassroom().getTeacher().getUsername())) {
                     QuizDTO quizDTO = QuizDTO.builder()
                             .name(quiz.getName())
+                            .description(quiz.getDescription())
                             .questions(quiz.getQuestions().stream().map(question -> {
                                         String questionType = questionRepository.findTypeById(question.getId());
                                         Set<String> answers = switch (questionType) {
@@ -205,6 +208,7 @@ public class QuizServiceImpl implements QuizService {
 
                 QuizDTO quizDTO = QuizDTO.builder()
                         .name(quiz.getName())
+                        .description(quiz.getDescription())
                         .questions(quiz.getQuestions().stream().map(question -> {
                                     String questionType = questionRepository.findTypeById(question.getId());
                                     Set<String> answers = switch (questionType) {
