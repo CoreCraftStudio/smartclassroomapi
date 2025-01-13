@@ -5,10 +5,7 @@ import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
 import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
-import com.smart.classroom.smartclassroom.repository.AnswerRepository;
-import com.smart.classroom.smartclassroom.repository.QuestionRepository;
-import com.smart.classroom.smartclassroom.repository.QuizRepository;
-import com.smart.classroom.smartclassroom.repository.UserRepository;
+import com.smart.classroom.smartclassroom.repository.*;
 import com.smart.classroom.smartclassroom.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +27,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final QuizRepository quizRepository;
+    private final QuizMarkRepository quizMarkRepository;
 
     @Override
     public QuizResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO) {
@@ -82,6 +80,13 @@ public class AnswerServiceImpl implements AnswerService {
                     throw new ResourceNotFoundException("No question in given quiz for given id");
                 }
             }
+            Double totalMark = answers.stream().mapToDouble(Answer::getMark).sum();
+            quizMarkRepository.save(QuizMark.builder()
+                    .student(student)
+                    .totalMark(totalMark)
+                    .quiz(quiz)
+                    .build());
+
             answerRepository.saveAll(answers);
             Classroom classroom = quiz.getClassroom();
             Set<Quiz> quizzes = classroom.getQuizzes();

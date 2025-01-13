@@ -21,8 +21,6 @@ public final class Constant {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class JWTConstant {
         public static final String ISSUER = "core-craft-solution";
-        public static final String CIPHER = "HS256";
-        public static final int KEY_SIZE = 256;
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -34,6 +32,12 @@ public final class Constant {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class PATH {
         public static final String QUIZZES = "/quizzes";
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class TestTypeConstant {
+        public static final String ASSIGNMENT = "assignment";
+        public static final String QUIZ = "quiz";
     }
 
 

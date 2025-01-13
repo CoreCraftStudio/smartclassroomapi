@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name = "type")
 @AllArgsConstructor
 @NoArgsConstructor

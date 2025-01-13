@@ -1,9 +1,11 @@
 package com.smart.classroom.smartclassroom.contoller;
 
 import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
+import com.smart.classroom.smartclassroom.dto.QuizMarkResponseDTO;
 import com.smart.classroom.smartclassroom.dto.QuizRequestDTO;
 import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
 import com.smart.classroom.smartclassroom.service.AnswerService;
+import com.smart.classroom.smartclassroom.service.MarkService;
 import com.smart.classroom.smartclassroom.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,7 @@ public class QuizController {
 
     private final QuizService quizService;
     private final AnswerService answerService;
+    private final MarkService markService;
 
     @PostMapping("/quizzes")
     public QuizResponseDTO createQuiz(@RequestBody QuizRequestDTO quizRequestDTO) {
@@ -49,6 +52,13 @@ public class QuizController {
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
         String type = optionalAuthority.map(GrantedAuthority::getAuthority).orElse(null);
         return quizService.viewQuizzes(user.getUsername(), type, classroomId);
+    }
+
+    @GetMapping("/quizzes/{quizId}/quiz-marks")
+    public QuizMarkResponseDTO viewMarks(@PathVariable Long quizId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return markService.getStudentQuizMarks(user.getUsername(), quizId);
     }
 
 }
