@@ -1,6 +1,5 @@
 package com.smart.classroom.smartclassroom.dto;
 
-import com.smart.classroom.smartclassroom.entity.QuizMark;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizMarkResponseDTO {
+public class StudentQuizMarkResponseDTO {
 
-    Set<QuizMark> quizMarks;
+    Set<StudentQuizMarkDTO> studentQuizMarks;
 }

@@ -1,6 +1,9 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
-import com.smart.classroom.smartclassroom.dto.QuizMarkResponseDTO;
+import com.smart.classroom.smartclassroom.dto.ClassQuizMarkDTO;
+import com.smart.classroom.smartclassroom.dto.ClassQuizMarkResponseDTO;
+import com.smart.classroom.smartclassroom.dto.StudentQuizMarkDTO;
+import com.smart.classroom.smartclassroom.dto.StudentQuizMarkResponseDTO;
 import com.smart.classroom.smartclassroom.entity.Quiz;
 import com.smart.classroom.smartclassroom.entity.QuizMark;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +28,35 @@ public class MarkServiceImpl implements MarkService {
     private final QuizRepository quizRepository;
 
     @Override
-    public QuizMarkResponseDTO getClassQuizMarks(String studentUsername, Long classroomId) {
+    public ClassQuizMarkResponseDTO getClassQuizMarks(String studentUsername, Long classroomId) {
         Set<QuizMark> quizMarks = quizMarkRepository.findByUsernameAndClassId(studentUsername, classroomId);
-        return QuizMarkResponseDTO.builder()
-                .quizMarks(quizMarks)
+        Set<ClassQuizMarkDTO> classQuizMarks = quizMarks.stream()
+                .map(quizMark -> ClassQuizMarkDTO.builder()
+                        .quizName(quizMark.getQuiz().getName())
+                        .totalMark(quizMark.getTotalMark())
+                        .build())
+                .collect(Collectors.toSet());
+
+        return ClassQuizMarkResponseDTO.builder()
+                .classQuizMarks(classQuizMarks)
                 .build();
     }
 
     @Override
-    public QuizMarkResponseDTO getStudentQuizMarks(String teacherUsername, Long quizId) {
+    public StudentQuizMarkResponseDTO getStudentQuizMarks(String teacherUsername, Long quizId) {
         Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
         if (optionalQuiz.isPresent()) {
             Quiz quiz = optionalQuiz.get();
             if (teacherUsername.equals(quiz.getClassroom().getTeacher().getUsername())) {
                 Set<QuizMark> quizMarks = quizMarkRepository.findByQuizId(quizId);
-                return QuizMarkResponseDTO.builder()
-                        .quizMarks(quizMarks)
+                Set<StudentQuizMarkDTO> studentQuizMarks = quizMarks.stream()
+                        .map(quizMark -> StudentQuizMarkDTO.builder()
+                                .studentUsername(quizMark.getStudent().getUsername())
+                                .totalMarks(quizMark.getTotalMark())
+                                .build()).collect(Collectors.toSet());
+
+                return StudentQuizMarkResponseDTO.builder()
+                        .studentQuizMarks(studentQuizMarks)
                         .build();
             } else {
                 throw new AuthorizationException("Teacher not allow to view the quiz marks for given id");

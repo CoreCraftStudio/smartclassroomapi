@@ -1,10 +1,11 @@
 package com.smart.classroom.smartclassroom.service;
 
-import com.smart.classroom.smartclassroom.dto.QuizMarkResponseDTO;
+import com.smart.classroom.smartclassroom.dto.ClassQuizMarkResponseDTO;
+import com.smart.classroom.smartclassroom.dto.StudentQuizMarkResponseDTO;
 
 public interface MarkService {
 
-    QuizMarkResponseDTO getClassQuizMarks(String studentUsername, Long classId);
+    ClassQuizMarkResponseDTO getClassQuizMarks(String studentUsername, Long classId);
 
-    QuizMarkResponseDTO getStudentQuizMarks(String teacherUsername, Long quizId);
+    StudentQuizMarkResponseDTO getStudentQuizMarks(String teacherUsername, Long quizId);
 }

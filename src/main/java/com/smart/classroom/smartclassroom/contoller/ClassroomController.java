@@ -1,9 +1,9 @@
 package com.smart.classroom.smartclassroom.contoller;
 
 
+import com.smart.classroom.smartclassroom.dto.ClassQuizMarkResponseDTO;
 import com.smart.classroom.smartclassroom.dto.ClassroomRequestDTO;
 import com.smart.classroom.smartclassroom.dto.ClassroomResponseDTO;
-import com.smart.classroom.smartclassroom.dto.QuizMarkResponseDTO;
 import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
 import com.smart.classroom.smartclassroom.service.ClassroomService;
 import com.smart.classroom.smartclassroom.service.MarkService;
@@ -76,7 +76,7 @@ public class ClassroomController {
     }
 
     @GetMapping("/classrooms/{classroomId}/quiz-marks")
-    public QuizMarkResponseDTO viewMarks(@PathVariable Long classroomId) {
+    public ClassQuizMarkResponseDTO viewMarks(@PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return markService.getClassQuizMarks(user.getUsername(), classroomId);

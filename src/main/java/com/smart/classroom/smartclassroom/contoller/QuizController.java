@@ -61,7 +61,7 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes/{quizId}/quiz-marks")
-    public QuizMarkResponseDTO viewMarks(@PathVariable Long quizId) {
+    public StudentQuizMarkResponseDTO viewMarks(@PathVariable Long quizId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return markService.getStudentQuizMarks(user.getUsername(), quizId);
