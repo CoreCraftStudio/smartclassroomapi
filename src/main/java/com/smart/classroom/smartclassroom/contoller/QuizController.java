@@ -1,6 +1,9 @@
 package com.smart.classroom.smartclassroom.contoller;
 
-import com.smart.classroom.smartclassroom.dto.*;
+import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
+import com.smart.classroom.smartclassroom.dto.QuizRequestDTO;
+import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
+import com.smart.classroom.smartclassroom.dto.QuizSetResponseDTO;
 import com.smart.classroom.smartclassroom.service.AnswerService;
 import com.smart.classroom.smartclassroom.service.MarkService;
 import com.smart.classroom.smartclassroom.service.QuizService;
@@ -58,13 +61,6 @@ public class QuizController {
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
         String type = optionalAuthority.map(GrantedAuthority::getAuthority).orElse(null);
         return quizService.viewQuiz(user.getUsername(), type, quizId);
-    }
-
-    @GetMapping("/quizzes/{quizId}/quiz-marks")
-    public StudentQuizMarkResponseDTO viewMarks(@PathVariable Long quizId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return markService.getStudentQuizMarks(user.getUsername(), quizId);
     }
 
 }

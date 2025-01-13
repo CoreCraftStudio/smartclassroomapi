@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentQuizMarkDTO {
+public class QuizMarkDTO {
     String studentUsername;
     Double totalMarks;
 }

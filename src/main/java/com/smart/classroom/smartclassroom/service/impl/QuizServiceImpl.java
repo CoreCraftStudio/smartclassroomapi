@@ -74,6 +74,7 @@ public class QuizServiceImpl implements QuizService {
 
                 Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                 q -> QuizDTO.builder()
+                                        .id(q.getId())
                                         .name(q.getName())
                                         .build()
                         )
@@ -102,6 +103,7 @@ public class QuizServiceImpl implements QuizService {
 
                 Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                 q -> QuizDTO.builder()
+                                        .id(q.getId())
                                         .name(q.getName())
                                         .build()
                         )
@@ -131,6 +133,7 @@ public class QuizServiceImpl implements QuizService {
                     Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                     q -> QuizDTO.builder()
                                             .name(q.getName())
+                                            .description(q.getDescription())
                                             .build()
                             )
                             .collect(Collectors.toSet());
@@ -148,6 +151,7 @@ public class QuizServiceImpl implements QuizService {
                     Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                     q -> QuizDTO.builder()
                                             .name(q.getName())
+                                            .description(q.getDescription())
                                             .build()
                             )
                             .collect(Collectors.toSet());
@@ -173,7 +177,9 @@ public class QuizServiceImpl implements QuizService {
             if (TEACHER.equals(type)) {
                 if (username.equals(quiz.getClassroom().getTeacher().getUsername())) {
                     QuizDTO quizDTO = QuizDTO.builder()
+                            .id(quiz.getId())
                             .name(quiz.getName())
+                            .description(quiz.getDescription())
                             .questions(quiz.getQuestions().stream().map(question -> {
                                         String questionType = questionRepository.findTypeById(question.getId());
                                         Set<String> answers = switch (questionType) {
@@ -202,7 +208,9 @@ public class QuizServiceImpl implements QuizService {
                 QuizMark quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
 
                 QuizDTO quizDTO = QuizDTO.builder()
+                        .id(quiz.getId())
                         .name(quiz.getName())
+                        .description(quiz.getDescription())
                         .questions(quiz.getQuestions().stream().map(question -> {
                                     String questionType = questionRepository.findTypeById(question.getId());
                                     Set<String> answers = switch (questionType) {

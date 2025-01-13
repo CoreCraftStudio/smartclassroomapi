@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentQuizMarkResponseDTO {
+public class QuizMarkResponseDTO {
 
-    Set<StudentQuizMarkDTO> studentQuizMarks;
+    Set<QuizMarkDTO> studentQuizMarks;
 }
