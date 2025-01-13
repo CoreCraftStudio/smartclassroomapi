@@ -34,7 +34,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
 
-                                .requestMatchers(HttpMethod.GET, "/classrooms").hasAuthority(STUDENT)
+                                .requestMatchers(HttpMethod.GET, "/classrooms").hasAnyAuthority(TEACHER, STUDENT)
                                 .requestMatchers("/classrooms/**").hasAuthority(TEACHER)
 
                                 .requestMatchers(HttpMethod.PUT, QUIZZES).hasAuthority(STUDENT)

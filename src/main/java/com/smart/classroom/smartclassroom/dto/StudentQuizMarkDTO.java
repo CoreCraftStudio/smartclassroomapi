@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizResponseDTO {
-    QuizDTO quiz;
+public class StudentQuizMarkDTO {
+    String studentUsername;
+    Double totalMarks;
 }

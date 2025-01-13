@@ -1,19 +1,15 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
-import com.smart.classroom.smartclassroom.dto.AnswerRequestDTO;
-import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
+import com.smart.classroom.smartclassroom.dto.*;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
-import com.smart.classroom.smartclassroom.repository.AnswerRepository;
-import com.smart.classroom.smartclassroom.repository.QuestionRepository;
-import com.smart.classroom.smartclassroom.repository.QuizRepository;
-import com.smart.classroom.smartclassroom.repository.UserRepository;
+import com.smart.classroom.smartclassroom.repository.*;
 import com.smart.classroom.smartclassroom.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,6 +26,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final QuizRepository quizRepository;
+    private final QuizMarkRepository quizMarkRepository;
 
     @Override
     public QuizResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO) {
@@ -82,19 +79,50 @@ public class AnswerServiceImpl implements AnswerService {
                     throw new ResourceNotFoundException("No question in given quiz for given id");
                 }
             }
+            Double totalMark = answers.stream().mapToDouble(Answer::getMark).sum();
+            quizMarkRepository.save(QuizMark.builder()
+                    .student(student)
+                    .totalMark(totalMark)
+                    .quiz(quiz)
+                    .build());
+
             answerRepository.saveAll(answers);
-            Classroom classroom = quiz.getClassroom();
-            Set<Quiz> quizzes = classroom.getQuizzes();
-            quizzes.stream()
-                    .map(Quiz::getQuestions)
-                    .flatMap(Set::stream)
-                    .map(Question::getAnswers)
-                    .flatMap(Set::stream)
-                    .collect(Collectors.toSet())
-                    .removeIf(answer -> !studentUsername.equals(answer.getStudent().getUsername()));
+
+            QuizDTO quizDTO = QuizDTO.builder()
+                    .name(quiz.getName())
+                    .totalMark(totalMark)
+                    .maxMarks((double) quiz.getQuestions().size())
+                    .id(quiz.getId())
+                    .questions(quiz.getQuestions().stream().map(question -> {
+                                String questionType = questionRepository.findTypeById(question.getId());
+                                Answer answer = question.getAnswers().stream().filter(a -> studentUsername.equals(a.getStudent().getUsername())
+                                        && question.getId().equals(a.getQuestion().getId())).findFirst().orElse(null);
+                                return QuestionDTO.builder()
+                                        .selectedAnswers(
+                                                Objects.nonNull(answer) ?
+                                                        switch (questionType) {
+                                                            case MULTIPLE_RESPONSE ->
+                                                                    ((MultipleResponseAnswer) answer).getResponses();
+                                                            case MULTIPLE_CHOICE ->
+                                                                    Set.of(((MultipleChoiceAnswer) answer).getChoice());
+                                                            default -> Set.of(((ShortAnswerAnswer) answer).getAnswer());
+                                                        } : null
+                                        )
+                                        .description(question.getDescription())
+                                        .type(questionType)
+                                        .answers(switch (questionType) {
+                                            case MULTIPLE_RESPONSE -> ((MultipleResponseQuestion) question).getResponses();
+                                            case MULTIPLE_CHOICE -> ((MultipleChoiceQuestion) question).getChoices();
+                                            default -> null;
+                                        })
+                                        .build();
+
+                            })
+                            .collect(Collectors.toSet()))
+                    .build();
 
             return QuizResponseDTO.builder()
-                    .quizzes(quizzes)
+                    .quiz(quizDTO)
                     .build();
         } else {
             throw new ResourceNotFoundException("No quiz for given id");

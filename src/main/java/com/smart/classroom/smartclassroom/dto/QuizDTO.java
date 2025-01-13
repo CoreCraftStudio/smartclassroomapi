@@ -5,10 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizResponseDTO {
-    QuizDTO quiz;
+public class QuizDTO {
+    Long id;
+    String name;
+    Set<QuestionDTO> questions;
+    Double totalMark;
+    Double maxMarks;
 }

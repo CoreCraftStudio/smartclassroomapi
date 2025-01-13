@@ -1,9 +1,8 @@
 package com.smart.classroom.smartclassroom.contoller;
 
-import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
+import com.smart.classroom.smartclassroom.dto.*;
 import com.smart.classroom.smartclassroom.service.AnswerService;
+import com.smart.classroom.smartclassroom.service.MarkService;
 import com.smart.classroom.smartclassroom.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,16 +19,17 @@ public class QuizController {
 
     private final QuizService quizService;
     private final AnswerService answerService;
+    private final MarkService markService;
 
     @PostMapping("/quizzes")
-    public QuizResponseDTO createQuiz(@RequestBody QuizRequestDTO quizRequestDTO) {
+    public QuizSetResponseDTO createQuiz(@RequestBody QuizRequestDTO quizRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return quizService.createQuiz(user.getUsername(), quizRequestDTO);
     }
 
     @DeleteMapping("/quizzes")
-    public QuizResponseDTO deleteQuiz(@RequestParam Long quizId) {
+    public QuizSetResponseDTO deleteQuiz(@RequestParam Long quizId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return quizService.deleteQuiz(user.getUsername(), quizId);
@@ -43,12 +43,28 @@ public class QuizController {
     }
 
     @GetMapping("/quizzes")
-    public QuizResponseDTO viewQuizzes(@RequestParam Long classroomId) {
+    public QuizSetResponseDTO viewQuizzes(@RequestParam Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
         String type = optionalAuthority.map(GrantedAuthority::getAuthority).orElse(null);
         return quizService.viewQuizzes(user.getUsername(), type, classroomId);
+    }
+
+    @GetMapping("/quizzes/{quizId}")
+    public QuizResponseDTO viewQuiz(@PathVariable Long quizId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
+        String type = optionalAuthority.map(GrantedAuthority::getAuthority).orElse(null);
+        return quizService.viewQuiz(user.getUsername(), type, quizId);
+    }
+
+    @GetMapping("/quizzes/{quizId}/quiz-marks")
+    public StudentQuizMarkResponseDTO viewMarks(@PathVariable Long quizId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return markService.getStudentQuizMarks(user.getUsername(), quizId);
     }
 
 }
