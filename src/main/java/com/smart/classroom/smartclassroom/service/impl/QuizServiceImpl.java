@@ -151,6 +151,7 @@ public class QuizServiceImpl implements QuizService {
 
                     Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                     q -> QuizDTO.builder()
+                                            .id(q.getId())
                                             .name(q.getName())
                                             .description(q.getDescription())
                                             .build()
