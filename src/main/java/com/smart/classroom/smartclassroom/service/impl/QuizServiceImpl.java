@@ -177,6 +177,7 @@ public class QuizServiceImpl implements QuizService {
             if (TEACHER.equals(type)) {
                 if (username.equals(quiz.getClassroom().getTeacher().getUsername())) {
                     QuizDTO quizDTO = QuizDTO.builder()
+                            .id(quiz.getId())
                             .name(quiz.getName())
                             .description(quiz.getDescription())
                             .questions(quiz.getQuestions().stream().map(question -> {
@@ -207,6 +208,7 @@ public class QuizServiceImpl implements QuizService {
                 QuizMark quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
 
                 QuizDTO quizDTO = QuizDTO.builder()
+                        .id(quiz.getId())
                         .name(quiz.getName())
                         .description(quiz.getDescription())
                         .questions(quiz.getQuestions().stream().map(question -> {
