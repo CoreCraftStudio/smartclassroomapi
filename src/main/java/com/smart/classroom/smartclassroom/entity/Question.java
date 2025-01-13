@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type")
 @AllArgsConstructor
 @NoArgsConstructor

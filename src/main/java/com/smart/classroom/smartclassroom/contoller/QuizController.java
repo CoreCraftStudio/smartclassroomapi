@@ -36,7 +36,7 @@ public class QuizController {
     }
 
     @PutMapping("/quizzes")
-    public QuizSetResponseDTO createAnswer(@RequestBody AnswerSetRequestDTO answerSetRequestDTO) {
+    public QuizResponseDTO createAnswer(@RequestBody AnswerSetRequestDTO answerSetRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return answerService.createAnswerSet(user.getUsername(), answerSetRequestDTO);

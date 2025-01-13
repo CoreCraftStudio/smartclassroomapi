@@ -1,9 +1,6 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
-import com.smart.classroom.smartclassroom.dto.QuestionRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
-import com.smart.classroom.smartclassroom.dto.QuizSetResponseDTO;
+import com.smart.classroom.smartclassroom.dto.*;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
@@ -69,18 +66,21 @@ public class QuizServiceImpl implements QuizService {
                             )
                     );
                 }
+
                 quiz.setQuestions(questions);
                 Set<Quiz> quizzes = classroom.getQuizzes();
                 quizzes.add(quiz);
                 classroomRepository.save(classroom);
 
-                quizzes.stream()
-                        .map(Quiz::getQuestions).
-                        flatMap(Set::stream)
-                        .forEach(question -> question.setAnswers(null));
+                Set<QuizDTO> quizDTOs = quizzes.stream().map(
+                                q -> QuizDTO.builder()
+                                        .name(q.getName())
+                                        .build()
+                        )
+                        .collect(Collectors.toSet());
 
                 return QuizSetResponseDTO.builder()
-                        .quizzes(quizzes)
+                        .quizzes(quizDTOs)
                         .build();
             } else {
                 throw new AuthorizationException("Teacher not allow to add a quiz to the classroom");
@@ -100,13 +100,15 @@ public class QuizServiceImpl implements QuizService {
                 quizRepository.deleteById(quizId);
                 Set<Quiz> quizzes = classroom.getQuizzes();
 
-                quizzes.stream()
-                        .map(Quiz::getQuestions).
-                        flatMap(Set::stream)
-                        .forEach(question -> question.setAnswers(null));
+                Set<QuizDTO> quizDTOs = quizzes.stream().map(
+                                q -> QuizDTO.builder()
+                                        .name(q.getName())
+                                        .build()
+                        )
+                        .collect(Collectors.toSet());
 
                 return QuizSetResponseDTO.builder()
-                        .quizzes(quizzes)
+                        .quizzes(quizDTOs)
                         .build();
             } else {
                 throw new AuthorizationException("Teacher not allow to delete the quiz from the classroom");
@@ -125,11 +127,16 @@ public class QuizServiceImpl implements QuizService {
             if (TEACHER.equals(type)) {
                 if (username.equals(classroom.getTeacher().getUsername())) {
                     Set<Quiz> quizzes = classroom.getQuizzes();
-                    quizzes
-                            .forEach(quiz -> quiz.setQuestions(null));
+
+                    Set<QuizDTO> quizDTOs = quizzes.stream().map(
+                                    q -> QuizDTO.builder()
+                                            .name(q.getName())
+                                            .build()
+                            )
+                            .collect(Collectors.toSet());
 
                     return QuizSetResponseDTO.builder()
-                            .quizzes(quizzes)
+                            .quizzes(quizDTOs)
                             .build();
                 } else {
                     throw new AuthorizationException("Teacher not allow to view the quiz of the classroom");
@@ -137,11 +144,16 @@ public class QuizServiceImpl implements QuizService {
             } else {
                 if (classroom.getStudents().stream().map(Student::getUsername).collect(Collectors.toSet()).contains(username)) {
                     Set<Quiz> quizzes = classroom.getQuizzes();
-                    quizzes
-                            .forEach(quiz -> quiz.setQuestions(null));
+
+                    Set<QuizDTO> quizDTOs = quizzes.stream().map(
+                                    q -> QuizDTO.builder()
+                                            .name(q.getName())
+                                            .build()
+                            )
+                            .collect(Collectors.toSet());
 
                     return QuizSetResponseDTO.builder()
-                            .quizzes(quizzes)
+                            .quizzes(quizDTOs)
                             .build();
                 } else {
                     throw new AuthorizationException("Student not allow to view the quiz of the classroom");
@@ -160,28 +172,58 @@ public class QuizServiceImpl implements QuizService {
             Quiz quiz = optionalQuiz.get();
             if (TEACHER.equals(type)) {
                 if (username.equals(quiz.getClassroom().getTeacher().getUsername())) {
-                    quiz.getQuestions()
-                            .forEach(question -> question.setAnswers(null));
+                    QuizDTO quizDTO = QuizDTO.builder()
+                            .name(quiz.getName())
+                            .questions(quiz.getQuestions().stream().map(question -> {
+                                        String questionType = questionRepository.findTypeById(question.getId());
+                                        Set<String> answers = switch (questionType) {
+                                            case MULTIPLE_RESPONSE -> ((MultipleResponseQuestion) question).getResponses();
+                                            case MULTIPLE_CHOICE -> ((MultipleChoiceQuestion) question).getChoices();
+                                            default -> null;
+                                        };
+
+                                        return QuestionDTO.builder()
+                                                .description(question.getDescription())
+                                                .type(questionType)
+                                                .answers(answers)
+                                                .build();
+
+                                    })
+                                    .collect(Collectors.toSet()))
+                            .build();
 
                     return QuizResponseDTO.builder()
-                            .quiz(quiz)
+                            .quiz(quizDTO)
                             .build();
                 } else {
                     throw new AuthorizationException("Teacher not allow to delete the quiz from the classroom");
                 }
             } else {
-                quiz.getQuestions()
-                        .stream()
-                        .map(Question::getAnswers)
-                        .flatMap(Set::stream)
-                        .collect(Collectors.toSet())
-                        .removeIf(answer -> !username.equals(answer.getStudent().getUsername()));
-
                 QuizMark quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
 
+                QuizDTO quizDTO = QuizDTO.builder()
+                        .name(quiz.getName())
+                        .questions(quiz.getQuestions().stream().map(question -> {
+                                    String questionType = questionRepository.findTypeById(question.getId());
+                                    Set<String> answers = switch (questionType) {
+                                        case MULTIPLE_RESPONSE -> ((MultipleResponseQuestion) question).getResponses();
+                                        case MULTIPLE_CHOICE -> ((MultipleChoiceQuestion) question).getChoices();
+                                        default -> null;
+                                    };
+
+                                    return QuestionDTO.builder()
+                                            .description(question.getDescription())
+                                            .type(type)
+                                            .answers(answers)
+                                            .build();
+
+                                })
+                                .collect(Collectors.toSet()))
+                        .totalMark(quizMark.getTotalMark())
+                        .build();
+
                 return QuizResponseDTO.builder()
-                        .quiz(quiz)
-                        .quizMark(quizMark)
+                        .quiz(quizDTO)
                         .build();
             }
 
