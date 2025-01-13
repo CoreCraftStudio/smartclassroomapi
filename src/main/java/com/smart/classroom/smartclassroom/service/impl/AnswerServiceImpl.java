@@ -2,7 +2,7 @@ package com.smart.classroom.smartclassroom.service.impl;
 
 import com.smart.classroom.smartclassroom.dto.AnswerRequestDTO;
 import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
+import com.smart.classroom.smartclassroom.dto.QuizSetResponseDTO;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
 import com.smart.classroom.smartclassroom.repository.*;
@@ -30,7 +30,7 @@ public class AnswerServiceImpl implements AnswerService {
     private final QuizMarkRepository quizMarkRepository;
 
     @Override
-    public QuizResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO) {
+    public QuizSetResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO) {
         Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
         Optional<Quiz> optionalQuiz = quizRepository.findById(answerSetRequestDTO.getQuizId());
         if (optionalStudent.isPresent() && optionalQuiz.isPresent()) {
@@ -98,7 +98,7 @@ public class AnswerServiceImpl implements AnswerService {
                     .collect(Collectors.toSet())
                     .removeIf(answer -> !studentUsername.equals(answer.getStudent().getUsername()));
 
-            return QuizResponseDTO.builder()
+            return QuizSetResponseDTO.builder()
                     .quizzes(quizzes)
                     .build();
         } else {

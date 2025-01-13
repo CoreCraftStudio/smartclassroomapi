@@ -1,9 +1,9 @@
 package com.smart.classroom.smartclassroom.service;
 
 import com.smart.classroom.smartclassroom.dto.AnswerSetRequestDTO;
-import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
+import com.smart.classroom.smartclassroom.dto.QuizSetResponseDTO;
 
 public interface AnswerService {
 
-    QuizResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO);
+    QuizSetResponseDTO createAnswerSet(String studentUsername, AnswerSetRequestDTO answerSetRequestDTO);
 }

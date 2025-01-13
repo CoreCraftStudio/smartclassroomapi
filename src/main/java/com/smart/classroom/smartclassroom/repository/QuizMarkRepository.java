@@ -13,4 +13,7 @@ public interface QuizMarkRepository extends JpaRepository<QuizMark, Long> {
 
     @Query("select qm from QuizMark qm where qm.quiz.id=?1")
     Set<QuizMark> findByQuizId(Long quizId);
+
+    @Query("select qm from QuizMark qm where qm.student.username=?1 and qm.quiz.id=?2")
+    QuizMark findByUsernameAndQuizId(String username, Long quizId);
 }

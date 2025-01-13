@@ -3,11 +3,13 @@ package com.smart.classroom.smartclassroom.service.impl;
 import com.smart.classroom.smartclassroom.dto.QuestionRequestDTO;
 import com.smart.classroom.smartclassroom.dto.QuizRequestDTO;
 import com.smart.classroom.smartclassroom.dto.QuizResponseDTO;
+import com.smart.classroom.smartclassroom.dto.QuizSetResponseDTO;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
 import com.smart.classroom.smartclassroom.repository.ClassroomRepository;
 import com.smart.classroom.smartclassroom.repository.QuestionRepository;
+import com.smart.classroom.smartclassroom.repository.QuizMarkRepository;
 import com.smart.classroom.smartclassroom.repository.QuizRepository;
 import com.smart.classroom.smartclassroom.service.QuizService;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +31,10 @@ public class QuizServiceImpl implements QuizService {
     private final ClassroomRepository classroomRepository;
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
+    private final QuizMarkRepository quizMarkRepository;
 
     @Override
-    public QuizResponseDTO createQuiz(String teacherUsername, QuizRequestDTO quizRequestDTO) {
+    public QuizSetResponseDTO createQuiz(String teacherUsername, QuizRequestDTO quizRequestDTO) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(quizRequestDTO.getClassroomId());
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
@@ -76,7 +79,7 @@ public class QuizServiceImpl implements QuizService {
                         flatMap(Set::stream)
                         .forEach(question -> question.setAnswers(null));
 
-                return QuizResponseDTO.builder()
+                return QuizSetResponseDTO.builder()
                         .quizzes(quizzes)
                         .build();
             } else {
@@ -88,7 +91,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizResponseDTO deleteQuiz(String teacherUsername, Long quizId) {
+    public QuizSetResponseDTO deleteQuiz(String teacherUsername, Long quizId) {
         Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
         if (optionalQuiz.isPresent()) {
             Quiz quiz = optionalQuiz.get();
@@ -102,7 +105,7 @@ public class QuizServiceImpl implements QuizService {
                         flatMap(Set::stream)
                         .forEach(question -> question.setAnswers(null));
 
-                return QuizResponseDTO.builder()
+                return QuizSetResponseDTO.builder()
                         .quizzes(quizzes)
                         .build();
             } else {
@@ -115,42 +118,77 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-    public QuizResponseDTO viewQuizzes(String username, String type, Long classroomId) {
+    public QuizSetResponseDTO viewQuizzes(String username, String type, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             if (TEACHER.equals(type)) {
                 if (username.equals(classroom.getTeacher().getUsername())) {
                     Set<Quiz> quizzes = classroom.getQuizzes();
-                    quizzes.stream()
-                            .map(Quiz::getQuestions).
-                            flatMap(Set::stream)
-                            .forEach(question -> question.setAnswers(null));
+                    quizzes
+                            .forEach(quiz -> quiz.setQuestions(null));
 
-                    return QuizResponseDTO.builder()
+                    return QuizSetResponseDTO.builder()
                             .quizzes(quizzes)
                             .build();
                 } else {
-                    throw new AuthorizationException("Teacher not allow to delete the quiz from the classroom");
+                    throw new AuthorizationException("Teacher not allow to view the quiz of the classroom");
                 }
             } else {
-                Set<Quiz> quizzes = classroom.getQuizzes();
-                quizzes.stream()
-                        .map(Quiz::getQuestions)
-                        .flatMap(Set::stream)
-                        .map(Question::getAnswers)
-                        .flatMap(Set::stream)
-                        .collect(Collectors.toSet())
-                        .removeIf(answer -> !username.equals(answer.getStudent().getUsername()));
+                if (classroom.getStudents().stream().map(Student::getUsername).collect(Collectors.toSet()).contains(username)) {
+                    Set<Quiz> quizzes = classroom.getQuizzes();
+                    quizzes
+                            .forEach(quiz -> quiz.setQuestions(null));
 
-                return QuizResponseDTO.builder()
-                        .quizzes(quizzes)
-                        .build();
+                    return QuizSetResponseDTO.builder()
+                            .quizzes(quizzes)
+                            .build();
+                } else {
+                    throw new AuthorizationException("Student not allow to view the quiz of the classroom");
+                }
             }
 
         } else {
             throw new ResourceNotFoundException("No classroom for given classroom id");
         }
+    }
+
+    @Override
+    public QuizResponseDTO viewQuiz(String username, String type, Long quizId) {
+        Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
+        if (optionalQuiz.isPresent()) {
+            Quiz quiz = optionalQuiz.get();
+            if (TEACHER.equals(type)) {
+                if (username.equals(quiz.getClassroom().getTeacher().getUsername())) {
+                    quiz.getQuestions()
+                            .forEach(question -> question.setAnswers(null));
+
+                    return QuizResponseDTO.builder()
+                            .quiz(quiz)
+                            .build();
+                } else {
+                    throw new AuthorizationException("Teacher not allow to delete the quiz from the classroom");
+                }
+            } else {
+                quiz.getQuestions()
+                        .stream()
+                        .map(Question::getAnswers)
+                        .flatMap(Set::stream)
+                        .collect(Collectors.toSet())
+                        .removeIf(answer -> !username.equals(answer.getStudent().getUsername()));
+
+                QuizMark quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
+
+                return QuizResponseDTO.builder()
+                        .quiz(quiz)
+                        .quizMark(quizMark)
+                        .build();
+            }
+
+        } else {
+            throw new ResourceNotFoundException("No quiz for given quiz id");
+        }
+
     }
 
 }
