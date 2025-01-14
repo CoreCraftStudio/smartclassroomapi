@@ -222,7 +222,7 @@ public class QuizServiceImpl implements QuizService {
                     throw new AuthorizationException("Teacher not allow to delete the quiz from the classroom");
                 }
             } else {
-                QuizMark quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
+                Optional<QuizMark> quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
 
                 QuizDTO quizDTO = QuizDTO.builder()
                         .id(quiz.getId())
@@ -268,7 +268,7 @@ public class QuizServiceImpl implements QuizService {
 
                                 })
                                 .collect(Collectors.toSet()))
-                        .totalMark(quizMark.getTotalMark())
+                        .totalMark(quizMark.map(QuizMark::getTotalMark).orElse(null))
                         .maxMarks((double) quiz.getQuestions().size())
                         .build();
 

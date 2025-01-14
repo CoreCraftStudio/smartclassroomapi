@@ -4,6 +4,7 @@ import com.smart.classroom.smartclassroom.entity.QuizMark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface QuizMarkRepository extends JpaRepository<QuizMark, Long> {
@@ -15,5 +16,5 @@ public interface QuizMarkRepository extends JpaRepository<QuizMark, Long> {
     Set<QuizMark> findByQuizId(Long quizId);
 
     @Query("select qm from QuizMark qm where qm.student.username=?1 and qm.quiz.id=?2")
-    QuizMark findByUsernameAndQuizId(String username, Long quizId);
+    Optional<QuizMark> findByUsernameAndQuizId(String username, Long quizId);
 }
