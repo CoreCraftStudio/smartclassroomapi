@@ -1,7 +1,7 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
-import com.smart.classroom.smartclassroom.dto.QuizMarkDTO;
-import com.smart.classroom.smartclassroom.dto.QuizMarkResponseDTO;
+import com.smart.classroom.smartclassroom.dto.QuizReportResponseDTO;
+import com.smart.classroom.smartclassroom.dto.StudentQuizMarkDTO;
 import com.smart.classroom.smartclassroom.entity.Quiz;
 import com.smart.classroom.smartclassroom.entity.QuizMark;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
@@ -26,19 +26,19 @@ public class MarkServiceImpl implements MarkService {
     private final QuizRepository quizRepository;
 
     @Override
-    public QuizMarkResponseDTO getQuizMarks(String teacherUsername, Long quizId) {
+    public QuizReportResponseDTO getQuizMarks(String teacherUsername, Long quizId) {
         Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
         if (optionalQuiz.isPresent()) {
             Quiz quiz = optionalQuiz.get();
             if (teacherUsername.equals(quiz.getClassroom().getTeacher().getUsername())) {
                 Set<QuizMark> quizMarks = quizMarkRepository.findByQuizId(quizId);
-                Set<QuizMarkDTO> studentQuizMarks = quizMarks.stream()
-                        .map(quizMark -> QuizMarkDTO.builder()
+                Set<StudentQuizMarkDTO> studentQuizMarks = quizMarks.stream()
+                        .map(quizMark -> StudentQuizMarkDTO.builder()
                                 .studentUsername(quizMark.getStudent().getUsername())
                                 .totalMarks(quizMark.getTotalMark())
                                 .build()).collect(Collectors.toSet());
 
-                return QuizMarkResponseDTO.builder()
+                return QuizReportResponseDTO.builder()
                         .studentQuizMarks(studentQuizMarks)
                         .build();
             } else {

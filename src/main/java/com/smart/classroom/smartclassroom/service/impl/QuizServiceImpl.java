@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -75,6 +76,7 @@ public class QuizServiceImpl implements QuizService {
                 Set<QuizDTO> quizDTOs = quizzes.stream().map(
                                 q -> QuizDTO.builder()
                                         .id(q.getId())
+                                        .description(q.getDescription())
                                         .name(q.getName())
                                         .build()
                         )
@@ -184,16 +186,29 @@ public class QuizServiceImpl implements QuizService {
                             .description(quiz.getDescription())
                             .questions(quiz.getQuestions().stream().map(question -> {
                                         String questionType = questionRepository.findTypeById(question.getId());
-                                        Set<String> answers = switch (questionType) {
-                                            case MULTIPLE_RESPONSE -> ((MultipleResponseQuestion) question).getResponses();
-                                            case MULTIPLE_CHOICE -> ((MultipleChoiceQuestion) question).getChoices();
-                                            default -> null;
-                                        };
+                                        Set<String> answers;
+                                        Set<String> matchAnswers;
+                                        switch (questionType) {
+                                            case MULTIPLE_RESPONSE -> {
+                                                answers = ((MultipleResponseQuestion) question).getResponses();
+                                                matchAnswers = ((MultipleResponseQuestion) question).getMatchResponses();
+
+                                            }
+                                            case MULTIPLE_CHOICE -> {
+                                                answers = ((MultipleChoiceQuestion) question).getChoices();
+                                                matchAnswers = Set.of(((MultipleChoiceQuestion) question).getMatchChoice());
+                                            }
+                                            default -> {
+                                                answers = null;
+                                                matchAnswers = Set.of(((ShortAnswerQuestion) question).getMatchAnswer());
+                                            }
+                                        }
 
                                         return QuestionDTO.builder()
                                                 .description(question.getDescription())
                                                 .type(questionType)
                                                 .answers(answers)
+                                                .matchAnswers(matchAnswers)
                                                 .build();
 
                                     })
@@ -214,22 +229,47 @@ public class QuizServiceImpl implements QuizService {
                         .name(quiz.getName())
                         .description(quiz.getDescription())
                         .questions(quiz.getQuestions().stream().map(question -> {
+                                    Answer answer = question.getAnswers().stream()
+                                            .filter(a -> username.equals(a.getStudent().getUsername()))
+                                            .findFirst().orElse(null);
+
                                     String questionType = questionRepository.findTypeById(question.getId());
-                                    Set<String> answers = switch (questionType) {
-                                        case MULTIPLE_RESPONSE -> ((MultipleResponseQuestion) question).getResponses();
-                                        case MULTIPLE_CHOICE -> ((MultipleChoiceQuestion) question).getChoices();
-                                        default -> null;
-                                    };
+                                    Set<String> answers;
+                                    Set<String> matchAnswers;
+                                    Double mark = Objects.nonNull(answer) ? answer.getMark() : null;
+                                    Set<String> selectedAnswers;
+                                    switch (questionType) {
+                                        case MULTIPLE_RESPONSE -> {
+                                            answers = ((MultipleResponseQuestion) question).getResponses();
+                                            matchAnswers = Objects.nonNull(mark) ? ((MultipleResponseQuestion) question).getMatchResponses() : null;
+                                            selectedAnswers = Objects.nonNull(answer) ? ((MultipleResponseAnswer) answer).getResponses() : null;
+
+                                        }
+                                        case MULTIPLE_CHOICE -> {
+                                            answers = ((MultipleChoiceQuestion) question).getChoices();
+                                            matchAnswers = Objects.nonNull(mark) ? Set.of(((MultipleChoiceQuestion) question).getMatchChoice()) : null;
+                                            selectedAnswers = Objects.nonNull(answer) ? Set.of(((MultipleChoiceAnswer) answer).getChoice()) : null;
+                                        }
+                                        default -> {
+                                            answers = null;
+                                            matchAnswers = Objects.nonNull(mark) ? Set.of(((ShortAnswerQuestion) question).getMatchAnswer()) : null;
+                                            selectedAnswers = Objects.nonNull(answer) ? Set.of(((ShortAnswerAnswer) answer).getAnswer()) : null;
+                                        }
+                                    }
 
                                     return QuestionDTO.builder()
                                             .description(question.getDescription())
-                                            .type(type)
+                                            .type(questionType)
                                             .answers(answers)
+                                            .matchAnswers(matchAnswers)
+                                            .selectedAnswers(selectedAnswers)
+                                            .mark(mark)
                                             .build();
 
                                 })
                                 .collect(Collectors.toSet()))
                         .totalMark(quizMark.getTotalMark())
+                        .maxMarks((double) quiz.getQuestions().size())
                         .build();
 
                 return QuizResponseDTO.builder()
