@@ -49,13 +49,6 @@ public class ClassroomController {
         return classroomService.dropStudent(user.getUsername(), studentUsername, classroomId);
     }
 
-    @PatchMapping("/classrooms/{classroomId}")
-    public StudentSetResponseDTO updateParent(@RequestParam String studentUsername, @RequestParam(required = false) String parentUsername, @PathVariable Long classroomId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return classroomService.updateParent(user.getUsername(), studentUsername, parentUsername, classroomId);
-    }
-
     @GetMapping("/classrooms")
     public ClassroomResponseDTO viewClassrooms() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

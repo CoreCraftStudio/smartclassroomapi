@@ -36,6 +36,7 @@ public class SecurityConfig {
 
                                 .requestMatchers(HttpMethod.GET, "/classrooms").hasAnyAuthority(TEACHER, STUDENT)
                                 .requestMatchers("/classrooms/**").hasAuthority(TEACHER)
+                                .requestMatchers(HttpMethod.PATCH, "/students/**").hasAuthority(TEACHER)
 
                                 .requestMatchers(HttpMethod.PUT, QUIZZES).hasAuthority(STUDENT)
                                 .requestMatchers(HttpMethod.POST, QUIZZES).hasAuthority(TEACHER)
