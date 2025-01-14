@@ -44,7 +44,14 @@ public class MemberServiceImpl implements MemberService {
                                     .password(encodedPassword)
                                     .freemium(Boolean.FALSE)
                                     .build();
-                            memberResponseDTOBuilder.member(teacher);
+
+                            memberResponseDTOBuilder
+                                    .username(teacher.getUsername())
+                                    .profileName(teacher.getProfileName())
+                                    .email(teacher.getEmail())
+                                    .phone(teacher.getPhone())
+                                    .freemium(teacher.getFreemium());
+
                             yield teacher;
                         }
                         case STUDENT -> {
@@ -56,7 +63,13 @@ public class MemberServiceImpl implements MemberService {
                                     .password(encodedPassword)
                                     .freemium(Boolean.FALSE)
                                     .build();
-                            memberResponseDTOBuilder.member(student);
+
+                            memberResponseDTOBuilder
+                                    .username(student.getUsername())
+                                    .profileName(student.getProfileName())
+                                    .email(student.getEmail())
+                                    .phone(student.getPhone())
+                                    .freemium(student.getFreemium());
                             yield student;
                         }
                         default -> {
@@ -68,7 +81,12 @@ public class MemberServiceImpl implements MemberService {
                                     .password(encodedPassword)
                                     .freemium(Boolean.FALSE)
                                     .build();
-                            memberResponseDTOBuilder.member(parent);
+                            memberResponseDTOBuilder
+                                    .username(parent.getUsername())
+                                    .profileName(parent.getProfileName())
+                                    .email(parent.getEmail())
+                                    .phone(parent.getPhone())
+                                    .freemium(parent.getFreemium());
                             yield parent;
                         }
                     }
@@ -90,7 +108,11 @@ public class MemberServiceImpl implements MemberService {
             if (passwordEncoder.matches(memberRequestDTO.getPassword(), member.getPassword())) {
                 String type = userRepository.findTypeByUsername(memberRequestDTO.getUsername());
                 return MemberResponseDTO.builder()
-                        .member(member)
+                        .username(member.getUsername())
+                        .profileName(member.getProfileName())
+                        .email(member.getEmail())
+                        .phone(member.getPhone())
+                        .freemium(member.getFreemium())
                         .type(type)
                         .build();
             } else {
