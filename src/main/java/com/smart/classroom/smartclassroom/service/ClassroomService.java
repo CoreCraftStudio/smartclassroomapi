@@ -2,7 +2,7 @@ package com.smart.classroom.smartclassroom.service;
 
 import com.smart.classroom.smartclassroom.dto.ClassroomRequestDTO;
 import com.smart.classroom.smartclassroom.dto.ClassroomResponseDTO;
-import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
+import com.smart.classroom.smartclassroom.dto.StudentSetResponseDTO;
 
 public interface ClassroomService {
 
@@ -10,14 +10,14 @@ public interface ClassroomService {
 
     ClassroomResponseDTO deleteClassroom(String teacherUsername, Long classroomId);
 
-    StudentResponseDTO addStudent(String teacherUsername, String studentUsername, Long classroomId);
+    StudentSetResponseDTO addStudent(String teacherUsername, String studentUsername, Long classroomId);
 
-    StudentResponseDTO dropStudent(String teacherUsername, String studentUsername, Long classroomId);
+    StudentSetResponseDTO dropStudent(String teacherUsername, String studentUsername, Long classroomId);
 
-    StudentResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId);
+    StudentSetResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId);
 
     ClassroomResponseDTO viewClassrooms(String username, String type);
 
-    StudentResponseDTO viewStudents(String teacherUsername, Long classroomId);
+    StudentSetResponseDTO viewStudents(String teacherUsername, Long classroomId);
 
 }

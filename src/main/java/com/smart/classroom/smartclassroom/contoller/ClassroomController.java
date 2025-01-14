@@ -3,7 +3,7 @@ package com.smart.classroom.smartclassroom.contoller;
 
 import com.smart.classroom.smartclassroom.dto.ClassroomRequestDTO;
 import com.smart.classroom.smartclassroom.dto.ClassroomResponseDTO;
-import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
+import com.smart.classroom.smartclassroom.dto.StudentSetResponseDTO;
 import com.smart.classroom.smartclassroom.service.ClassroomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -36,21 +36,21 @@ public class ClassroomController {
 
 
     @PutMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO addStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
+    public StudentSetResponseDTO addStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.addStudent(user.getUsername(), studentUsername, classroomId);
     }
 
     @DeleteMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO dropStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
+    public StudentSetResponseDTO dropStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.dropStudent(user.getUsername(), studentUsername, classroomId);
     }
 
     @PatchMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO updateParent(@RequestParam String studentUsername, @RequestParam(required = false) String parentUsername, @PathVariable Long classroomId) {
+    public StudentSetResponseDTO updateParent(@RequestParam String studentUsername, @RequestParam(required = false) String parentUsername, @PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.updateParent(user.getUsername(), studentUsername, parentUsername, classroomId);
@@ -66,7 +66,7 @@ public class ClassroomController {
     }
 
     @GetMapping("/classrooms/{classroomId}")
-    public StudentResponseDTO viewStudents(@PathVariable Long classroomId) {
+    public StudentSetResponseDTO viewStudents(@PathVariable Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.viewStudents(user.getUsername(), classroomId);
