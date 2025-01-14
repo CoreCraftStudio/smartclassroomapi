@@ -94,9 +94,6 @@ public class ClassroomServiceImpl implements ClassroomService {
                                             .profileName(s.getProfileName())
                                             .email(s.getEmail())
                                             .phone(s.getPhone())
-                                            .parentUsername(s.getParent().getUsername())
-                                            .parentEmail(s.getParent().getEmail())
-                                            .parentPhone(s.getParent().getPhone())
                                             .build())
                                     .collect(Collectors.toSet()))
                             .build();
@@ -132,9 +129,6 @@ public class ClassroomServiceImpl implements ClassroomService {
                                             .profileName(student.getProfileName())
                                             .email(student.getEmail())
                                             .phone(student.getPhone())
-                                            .parentUsername(student.getParent().getUsername())
-                                            .parentEmail(student.getParent().getEmail())
-                                            .parentPhone(student.getParent().getPhone())
                                             .build())
                                     .collect(Collectors.toSet()))
                             .build();
@@ -178,9 +172,6 @@ public class ClassroomServiceImpl implements ClassroomService {
                                             .profileName(s.getProfileName())
                                             .email(s.getEmail())
                                             .phone(s.getPhone())
-                                            .parentUsername(s.getParent().getUsername())
-                                            .parentEmail(s.getParent().getEmail())
-                                            .parentPhone(s.getParent().getPhone())
                                             .build())
                                     .collect(Collectors.toSet()))
                             .build();
@@ -239,9 +230,6 @@ public class ClassroomServiceImpl implements ClassroomService {
                                         .profileName(student.getProfileName())
                                         .email(student.getEmail())
                                         .phone(student.getPhone())
-                                        .parentUsername(student.getParent().getUsername())
-                                        .parentEmail(student.getParent().getEmail())
-                                        .parentPhone(student.getParent().getPhone())
                                         .build())
                                 .collect(Collectors.toSet()))
                         .build();
