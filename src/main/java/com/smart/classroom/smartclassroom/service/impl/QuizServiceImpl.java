@@ -205,7 +205,7 @@ public class QuizServiceImpl implements QuizService {
                                         }
 
                                         return QuestionDTO.builder()
-                                                .description(question.getDescription())
+                                                .question(question.getDescription())
                                                 .type(questionType)
                                                 .answers(answers)
                                                 .matchAnswers(matchAnswers)
@@ -258,7 +258,7 @@ public class QuizServiceImpl implements QuizService {
                                     }
 
                                     return QuestionDTO.builder()
-                                            .description(question.getDescription())
+                                            .question(question.getDescription())
                                             .type(questionType)
                                             .answers(answers)
                                             .matchAnswers(matchAnswers)

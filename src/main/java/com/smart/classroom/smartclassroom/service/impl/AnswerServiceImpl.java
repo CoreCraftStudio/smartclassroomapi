@@ -123,7 +123,7 @@ public class AnswerServiceImpl implements AnswerService {
                                 }
 
                                 return QuestionDTO.builder()
-                                        .description(question.getDescription())
+                                        .question(question.getDescription())
                                         .type(questionType)
                                         .answers(ansSet)
                                         .matchAnswers(matchAnswers)

@@ -54,8 +54,8 @@ public class QuizController {
         return quizService.viewQuizzes(user.getUsername(), type, classroomId);
     }
 
-    @GetMapping("/quizzes/{quizId}")
-    public QuizResponseDTO viewQuiz(@PathVariable Long quizId) {
+    @GetMapping("/quizzes/{quiz-id}")
+    public QuizResponseDTO viewQuiz(@PathVariable("quiz-id") Long quizId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();
