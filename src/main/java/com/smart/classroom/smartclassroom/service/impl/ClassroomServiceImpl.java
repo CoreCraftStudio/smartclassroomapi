@@ -4,6 +4,7 @@ import com.smart.classroom.smartclassroom.dto.*;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
+import com.smart.classroom.smartclassroom.exception.ValidationException;
 import com.smart.classroom.smartclassroom.repository.ClassroomRepository;
 import com.smart.classroom.smartclassroom.repository.UserRepository;
 import com.smart.classroom.smartclassroom.service.ClassroomService;
@@ -84,26 +85,30 @@ public class ClassroomServiceImpl implements ClassroomService {
                 if (optionalStudent.isPresent()) {
                     Student student = (Student) optionalStudent.get();
                     Set<Student> students = classroom.getStudents();
-                    students.add(student);
-                    classroom.setStudents(students);
-                    classroomRepository.save(classroom);
-                    return StudentSetResponseDTO.builder()
-                            .students(classroom.getStudents().stream()
-                                    .map(s -> {
-                                                Parent parent = student.getParent();
-                                                return StudentDTO.builder()
-                                                        .username(s.getUsername())
-                                                        .profileName(s.getProfileName())
-                                                        .email(s.getEmail())
-                                                        .phone(s.getPhone())
-                                                        .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
-                                                        .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
-                                                        .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
-                                                        .build();
-                                            }
-                                    )
-                                    .collect(Collectors.toSet()))
-                            .build();
+                    if (!students.stream().map(Student::getUsername).collect(Collectors.toSet()).contains(studentUsername)) {
+                        students.add(student);
+                        classroom.setStudents(students);
+                        classroomRepository.save(classroom);
+                        return StudentSetResponseDTO.builder()
+                                .students(classroom.getStudents().stream()
+                                        .map(s -> {
+                                                    Parent parent = student.getParent();
+                                                    return StudentDTO.builder()
+                                                            .username(s.getUsername())
+                                                            .profileName(s.getProfileName())
+                                                            .email(s.getEmail())
+                                                            .phone(s.getPhone())
+                                                            .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
+                                                            .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
+                                                            .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
+                                                            .build();
+                                                }
+                                        )
+                                        .collect(Collectors.toSet()))
+                                .build();
+                    } else {
+                        throw new ValidationException("Student already in the classroom");
+                    }
                 } else {
                     throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
                 }
@@ -126,25 +131,29 @@ public class ClassroomServiceImpl implements ClassroomService {
                 Optional<Member> optionalStudent = userRepository.findByUsername(studentUsername);
                 if (optionalStudent.isPresent()) {
                     Set<Student> students = classroom.getStudents();
-                    students.removeIf(student -> studentUsername.equals(student.getUsername()));
-                    classroom.setStudents(students);
-                    classroomRepository.save(classroom);
-                    return StudentSetResponseDTO.builder()
-                            .students(classroom.getStudents().stream()
-                                    .map(student -> {
-                                        Parent parent = student.getParent();
-                                        return StudentDTO.builder()
-                                                .username(student.getUsername())
-                                                .profileName(student.getProfileName())
-                                                .email(student.getEmail())
-                                                .phone(student.getPhone())
-                                                .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
-                                                .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
-                                                .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
-                                                .build();
-                                    })
-                                    .collect(Collectors.toSet()))
-                            .build();
+                    if (students.stream().map(Student::getUsername).collect(Collectors.toSet()).contains(studentUsername)) {
+                        students.removeIf(student -> studentUsername.equals(student.getUsername()));
+                        classroom.setStudents(students);
+                        classroomRepository.save(classroom);
+                        return StudentSetResponseDTO.builder()
+                                .students(classroom.getStudents().stream()
+                                        .map(student -> {
+                                            Parent parent = student.getParent();
+                                            return StudentDTO.builder()
+                                                    .username(student.getUsername())
+                                                    .profileName(student.getProfileName())
+                                                    .email(student.getEmail())
+                                                    .phone(student.getPhone())
+                                                    .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
+                                                    .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
+                                                    .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
+                                                    .build();
+                                        })
+                                        .collect(Collectors.toSet()))
+                                .build();
+                    } else {
+                        throw new ValidationException("Student not in the classroom");
+                    }
                 } else {
                     throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
                 }
