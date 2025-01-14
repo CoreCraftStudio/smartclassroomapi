@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentResponseDTO {
-    Set<StudentDTO> students;
+public class StudentDTO {
+
+    String username;
+    String profileName;
+    String email;
+    String phone;
+    String parentUsername;
+    String parentPhone;
+    String parentEmail;
 }

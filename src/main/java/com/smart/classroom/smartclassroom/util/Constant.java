@@ -16,6 +16,7 @@ public final class Constant {
     public static final class QuestionAndAnswerTypeConstant {
         public static final String MULTIPLE_RESPONSE = "multiple-response";
         public static final String MULTIPLE_CHOICE = "multiple-choice";
+        public static final String SHORT_ANSWER = "short-answer";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -32,12 +33,6 @@ public final class Constant {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class PATH {
         public static final String QUIZZES = "/quizzes";
-    }
-
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class TestTypeConstant {
-        public static final String ASSIGNMENT = "assignment";
-        public static final String QUIZ = "quiz";
     }
 
 
