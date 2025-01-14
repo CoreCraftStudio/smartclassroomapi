@@ -25,11 +25,11 @@ public class Classroom {
     @JsonIgnore
     Teacher teacher;
 
-    @OneToMany(mappedBy = "classroom")
+    @OneToMany(mappedBy = "classroom", cascade = CascadeType.REMOVE)
     @JsonIgnore
     Set<Assignment> assignments;
 
-    @OneToMany(mappedBy = "classroom")
+    @OneToMany(mappedBy = "classroom", cascade = CascadeType.REMOVE)
     @JsonIgnore
     Set<Quiz> quizzes;
 
