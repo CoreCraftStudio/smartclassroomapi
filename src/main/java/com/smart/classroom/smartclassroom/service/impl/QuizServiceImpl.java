@@ -44,24 +44,24 @@ public class QuizServiceImpl implements QuizService {
                         .build());
 
                 Set<Question> questions = new HashSet<>();
-                for (QuestionRequestDTO questionRequestDTO : quizRequestDTO.getQuestionRequestDTOs()) {
-                    questions.add(questionRepository.save(switch (questionRequestDTO.getQuestionType()) {
+                for (QuestionDTO questionDTO : quizRequestDTO.getQuestions()) {
+                    questions.add(questionRepository.save(switch (questionDTO.getType()) {
                                         case MULTIPLE_RESPONSE -> MultipleResponseQuestion.builder()
                                                 .quiz(quiz)
-                                                .description(quizRequestDTO.getDescription())
-                                                .matchResponses(questionRequestDTO.getMatchAnswers())
-                                                .responses(questionRequestDTO.getAnswers())
+                                                .description(questionDTO.getQuestion())
+                                                .matchResponses(questionDTO.getMatchAnswers())
+                                                .responses(questionDTO.getAnswers())
                                                 .build();
                                         case MULTIPLE_CHOICE -> MultipleChoiceQuestion.builder()
                                                 .quiz(quiz)
-                                                .description(quizRequestDTO.getDescription())
-                                                .matchChoice(questionRequestDTO.getMatchAnswers().stream().findFirst().orElse(null))
-                                                .choices(questionRequestDTO.getAnswers())
+                                                .description(questionDTO.getQuestion())
+                                                .matchChoice(questionDTO.getMatchAnswers().stream().findFirst().orElse(null))
+                                                .choices(questionDTO.getAnswers())
                                                 .build();
                                         default -> ShortAnswerQuestion.builder()
                                                 .quiz(quiz)
-                                                .description(quizRequestDTO.getDescription())
-                                                .matchAnswer(questionRequestDTO.getMatchAnswers().stream().findFirst().orElse(null))
+                                                .description(questionDTO.getQuestion())
+                                                .matchAnswer(questionDTO.getMatchAnswers().stream().findFirst().orElse(null))
                                                 .build();
                                     }
                             )

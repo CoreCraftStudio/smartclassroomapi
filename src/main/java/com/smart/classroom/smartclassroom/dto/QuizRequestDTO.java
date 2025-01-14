@@ -17,5 +17,5 @@ public class QuizRequestDTO {
     String description;
     Long classroomId;
     @JsonProperty("questions")
-    Set<QuestionRequestDTO> questionRequestDTOs;
+    Set<QuestionDTO> questions;
 }

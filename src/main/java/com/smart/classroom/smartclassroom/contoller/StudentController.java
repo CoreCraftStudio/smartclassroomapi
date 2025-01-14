@@ -17,8 +17,8 @@ public class StudentController {
 
     private final ClassroomService classroomService;
 
-    @PatchMapping("/students/{studentId}")
-    public StudentSetResponseDTO updateParent(@PathVariable String studentUsername, @RequestParam(required = false) String parentUsername, @RequestParam Long classroomId) {
+    @PatchMapping("/students/{student-id}")
+    public StudentSetResponseDTO updateParent(@PathVariable("student-id") String studentUsername, @RequestParam(required = false) String parentUsername, @RequestParam Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.updateParent(user.getUsername(), studentUsername, parentUsername, classroomId);
