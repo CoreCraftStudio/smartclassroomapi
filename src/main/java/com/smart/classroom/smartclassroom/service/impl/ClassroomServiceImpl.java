@@ -1,9 +1,6 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
-import com.smart.classroom.smartclassroom.dto.ClassroomDTO;
-import com.smart.classroom.smartclassroom.dto.ClassroomRequestDTO;
-import com.smart.classroom.smartclassroom.dto.ClassroomResponseDTO;
-import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
+import com.smart.classroom.smartclassroom.dto.*;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
@@ -91,7 +88,17 @@ public class ClassroomServiceImpl implements ClassroomService {
                     classroom.setStudents(students);
                     classroomRepository.save(classroom);
                     return StudentResponseDTO.builder()
-                            .students(classroom.getStudents())
+                            .students(classroom.getStudents().stream()
+                                    .map(s -> StudentDTO.builder()
+                                            .username(s.getUsername())
+                                            .profileName(s.getProfileName())
+                                            .email(s.getEmail())
+                                            .phone(s.getPhone())
+                                            .parentUsername(s.getParent().getUsername())
+                                            .parentEmail(s.getParent().getEmail())
+                                            .parentPhone(s.getParent().getPhone())
+                                            .build())
+                                    .collect(Collectors.toSet()))
                             .build();
                 } else {
                     throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
@@ -119,7 +126,17 @@ public class ClassroomServiceImpl implements ClassroomService {
                     classroom.setStudents(students);
                     classroomRepository.save(classroom);
                     return StudentResponseDTO.builder()
-                            .students(classroom.getStudents())
+                            .students(classroom.getStudents().stream()
+                                    .map(student -> StudentDTO.builder()
+                                            .username(student.getUsername())
+                                            .profileName(student.getProfileName())
+                                            .email(student.getEmail())
+                                            .phone(student.getPhone())
+                                            .parentUsername(student.getParent().getUsername())
+                                            .parentEmail(student.getParent().getEmail())
+                                            .parentPhone(student.getParent().getPhone())
+                                            .build())
+                                    .collect(Collectors.toSet()))
                             .build();
                 } else {
                     throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
@@ -155,7 +172,17 @@ public class ClassroomServiceImpl implements ClassroomService {
                     }
                     userRepository.save(student);
                     return StudentResponseDTO.builder()
-                            .students(classroom.getStudents())
+                            .students(classroom.getStudents().stream()
+                                    .map(s -> StudentDTO.builder()
+                                            .username(s.getUsername())
+                                            .profileName(s.getProfileName())
+                                            .email(s.getEmail())
+                                            .phone(s.getPhone())
+                                            .parentUsername(s.getParent().getUsername())
+                                            .parentEmail(s.getParent().getEmail())
+                                            .parentPhone(s.getParent().getPhone())
+                                            .build())
+                                    .collect(Collectors.toSet()))
                             .build();
                 } else {
                     throw new ResourceNotFoundException(NO_STUDENT_FOR_USERNAME);
@@ -206,7 +233,17 @@ public class ClassroomServiceImpl implements ClassroomService {
             Teacher teacher = classroom.getTeacher();
             if (teacherUsername.equals(teacher.getUsername())) {
                 return StudentResponseDTO.builder()
-                        .students(classroom.getStudents())
+                        .students(classroom.getStudents().stream()
+                                .map(student -> StudentDTO.builder()
+                                        .username(student.getUsername())
+                                        .profileName(student.getProfileName())
+                                        .email(student.getEmail())
+                                        .phone(student.getPhone())
+                                        .parentUsername(student.getParent().getUsername())
+                                        .parentEmail(student.getParent().getEmail())
+                                        .parentPhone(student.getParent().getPhone())
+                                        .build())
+                                .collect(Collectors.toSet()))
                         .build();
             } else {
                 throw new AuthorizationException("Teacher not allow to add a student to the classroom");
