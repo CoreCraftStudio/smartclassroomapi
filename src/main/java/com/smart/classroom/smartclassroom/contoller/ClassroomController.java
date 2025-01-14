@@ -35,15 +35,15 @@ public class ClassroomController {
     }
 
 
-    @PutMapping("/classrooms/{classroomId}")
-    public StudentSetResponseDTO addStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
+    @PutMapping("/classrooms/{classroom-id}")
+    public StudentSetResponseDTO addStudent(@RequestParam String studentUsername, @PathVariable("classroom-id") Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.addStudent(user.getUsername(), studentUsername, classroomId);
     }
 
-    @DeleteMapping("/classrooms/{classroomId}")
-    public StudentSetResponseDTO dropStudent(@RequestParam String studentUsername, @PathVariable Long classroomId) {
+    @DeleteMapping("/classrooms/{classroom-id}")
+    public StudentSetResponseDTO dropStudent(@RequestParam String studentUsername, @PathVariable("classroom-id") Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.dropStudent(user.getUsername(), studentUsername, classroomId);
@@ -58,8 +58,8 @@ public class ClassroomController {
         return classroomService.viewClassrooms(user.getUsername(), type);
     }
 
-    @GetMapping("/classrooms/{classroomId}")
-    public StudentSetResponseDTO viewStudents(@PathVariable Long classroomId) {
+    @GetMapping("/classrooms/{classroom-id}")
+    public StudentSetResponseDTO viewStudents(@PathVariable("classroom-id") Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return classroomService.viewStudents(user.getUsername(), classroomId);
