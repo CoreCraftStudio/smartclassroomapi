@@ -1,5 +1,6 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
+import com.smart.classroom.smartclassroom.dto.ClassroomDTO;
 import com.smart.classroom.smartclassroom.dto.ClassroomRequestDTO;
 import com.smart.classroom.smartclassroom.dto.ClassroomResponseDTO;
 import com.smart.classroom.smartclassroom.dto.StudentResponseDTO;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.smart.classroom.smartclassroom.util.Constant.ExceptionMessage.NO_CLASSROOM_FOR_ID;
 import static com.smart.classroom.smartclassroom.util.Constant.ExceptionMessage.NO_STUDENT_FOR_USERNAME;
@@ -38,7 +40,12 @@ public class ClassroomServiceImpl implements ClassroomService {
                     .build());
 
             return ClassroomResponseDTO.builder()
-                    .classrooms(teacher.getClassrooms())
+                    .classrooms(teacher.getClassrooms().stream()
+                            .map(classroom -> ClassroomDTO.builder()
+                                    .id(classroom.getId())
+                                    .name(classroom.getName())
+                                    .build())
+                            .collect(Collectors.toSet()))
                     .build();
         } else {
             throw new ResourceNotFoundException("No teacher for given username");
@@ -54,7 +61,12 @@ public class ClassroomServiceImpl implements ClassroomService {
             if (teacherUsername.equals(teacher.getUsername())) {
                 classroomRepository.deleteById(classroomId);
                 return ClassroomResponseDTO.builder()
-                        .classrooms(teacher.getClassrooms())
+                        .classrooms(teacher.getClassrooms().stream()
+                                .map(cl -> ClassroomDTO.builder()
+                                        .id(cl.getId())
+                                        .name(cl.getName())
+                                        .build())
+                                .collect(Collectors.toSet()))
                         .build();
             } else {
                 throw new AuthorizationException("Teacher not allow to delete the classroom");
@@ -163,12 +175,22 @@ public class ClassroomServiceImpl implements ClassroomService {
             if (TEACHER.equals(type)) {
                 Teacher teacher = (Teacher) optionalMember.get();
                 return ClassroomResponseDTO.builder()
-                        .classrooms(teacher.getClassrooms())
+                        .classrooms(teacher.getClassrooms().stream()
+                                .map(classroom -> ClassroomDTO.builder()
+                                        .id(classroom.getId())
+                                        .name(classroom.getName())
+                                        .build())
+                                .collect(Collectors.toSet()))
                         .build();
             } else {
                 Student student = (Student) optionalMember.get();
                 return ClassroomResponseDTO.builder()
-                        .classrooms(student.getClassrooms())
+                        .classrooms(student.getClassrooms().stream()
+                                .map(classroom -> ClassroomDTO.builder()
+                                        .id(classroom.getId())
+                                        .name(classroom.getName())
+                                        .build())
+                                .collect(Collectors.toSet()))
                         .build();
             }
         } else {
