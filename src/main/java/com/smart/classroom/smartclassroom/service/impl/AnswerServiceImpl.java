@@ -80,7 +80,7 @@ public class AnswerServiceImpl implements AnswerService {
                 }
             }
             Double totalMark = answers.stream().mapToDouble(Answer::getMark).sum();
-            quizMarkRepository.save(QuizMark.builder()
+            QuizMark quizMark = quizMarkRepository.save(QuizMark.builder()
                     .student(student)
                     .totalMark(totalMark)
                     .quiz(quiz)
@@ -94,31 +94,47 @@ public class AnswerServiceImpl implements AnswerService {
                     .maxMarks((double) quiz.getQuestions().size())
                     .id(quiz.getId())
                     .questions(quiz.getQuestions().stream().map(question -> {
+                                Answer answer = question.getAnswers().stream()
+                                        .filter(a -> studentUsername.equals(a.getStudent().getUsername()))
+                                        .findFirst().orElse(null);
+
                                 String questionType = questionRepository.findTypeById(question.getId());
-                                Answer answer = question.getAnswers().stream().filter(a -> studentUsername.equals(a.getStudent().getUsername())
-                                        && question.getId().equals(a.getQuestion().getId())).findFirst().orElse(null);
+                                Set<String> ansSet;
+                                Set<String> matchAnswers;
+                                Double mark = Objects.nonNull(answer) ? answer.getMark() : null;
+                                Set<String> selectedAnswers;
+                                switch (questionType) {
+                                    case MULTIPLE_RESPONSE -> {
+                                        ansSet = ((MultipleResponseQuestion) question).getResponses();
+                                        matchAnswers = Objects.nonNull(mark) ? ((MultipleResponseQuestion) question).getMatchResponses() : null;
+                                        selectedAnswers = Objects.nonNull(answer) ? ((MultipleResponseAnswer) answer).getResponses() : null;
+
+                                    }
+                                    case MULTIPLE_CHOICE -> {
+                                        ansSet = ((MultipleChoiceQuestion) question).getChoices();
+                                        matchAnswers = Objects.nonNull(mark) ? Set.of(((MultipleChoiceQuestion) question).getMatchChoice()) : null;
+                                        selectedAnswers = Objects.nonNull(answer) ? Set.of(((MultipleChoiceAnswer) answer).getChoice()) : null;
+                                    }
+                                    default -> {
+                                        ansSet = null;
+                                        matchAnswers = Objects.nonNull(mark) ? Set.of(((ShortAnswerQuestion) question).getMatchAnswer()) : null;
+                                        selectedAnswers = Objects.nonNull(answer) ? Set.of(((ShortAnswerAnswer) answer).getAnswer()) : null;
+                                    }
+                                }
+
                                 return QuestionDTO.builder()
-                                        .selectedAnswers(
-                                                Objects.nonNull(answer) ?
-                                                        switch (questionType) {
-                                                            case MULTIPLE_RESPONSE ->
-                                                                    ((MultipleResponseAnswer) answer).getResponses();
-                                                            case MULTIPLE_CHOICE ->
-                                                                    Set.of(((MultipleChoiceAnswer) answer).getChoice());
-                                                            default -> Set.of(((ShortAnswerAnswer) answer).getAnswer());
-                                                        } : null
-                                        )
                                         .description(question.getDescription())
                                         .type(questionType)
-                                        .answers(switch (questionType) {
-                                            case MULTIPLE_RESPONSE -> ((MultipleResponseQuestion) question).getResponses();
-                                            case MULTIPLE_CHOICE -> ((MultipleChoiceQuestion) question).getChoices();
-                                            default -> null;
-                                        })
+                                        .answers(ansSet)
+                                        .matchAnswers(matchAnswers)
+                                        .selectedAnswers(selectedAnswers)
+                                        .mark(mark)
                                         .build();
 
                             })
                             .collect(Collectors.toSet()))
+                    .totalMark(quizMark.getTotalMark())
+                    .maxMarks((double) quiz.getQuestions().size())
                     .build();
 
             return QuizResponseDTO.builder()
