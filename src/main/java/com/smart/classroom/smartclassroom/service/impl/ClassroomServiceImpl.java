@@ -74,7 +74,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO addStudent(String teacherUsername, String studentUsername, Long classroomId) {
+    public StudentSetResponseDTO addStudent(String teacherUsername, String studentUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
@@ -87,14 +87,21 @@ public class ClassroomServiceImpl implements ClassroomService {
                     students.add(student);
                     classroom.setStudents(students);
                     classroomRepository.save(classroom);
-                    return StudentResponseDTO.builder()
+                    return StudentSetResponseDTO.builder()
                             .students(classroom.getStudents().stream()
-                                    .map(s -> StudentDTO.builder()
-                                            .username(s.getUsername())
-                                            .profileName(s.getProfileName())
-                                            .email(s.getEmail())
-                                            .phone(s.getPhone())
-                                            .build())
+                                    .map(s -> {
+                                                Parent parent = student.getParent();
+                                                return StudentDTO.builder()
+                                                        .username(s.getUsername())
+                                                        .profileName(s.getProfileName())
+                                                        .email(s.getEmail())
+                                                        .phone(s.getPhone())
+                                                        .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
+                                                        .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
+                                                        .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
+                                                        .build();
+                                            }
+                                    )
                                     .collect(Collectors.toSet()))
                             .build();
                 } else {
@@ -110,7 +117,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO dropStudent(String teacherUsername, String studentUsername, Long classroomId) {
+    public StudentSetResponseDTO dropStudent(String teacherUsername, String studentUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
@@ -122,14 +129,20 @@ public class ClassroomServiceImpl implements ClassroomService {
                     students.removeIf(student -> studentUsername.equals(student.getUsername()));
                     classroom.setStudents(students);
                     classroomRepository.save(classroom);
-                    return StudentResponseDTO.builder()
+                    return StudentSetResponseDTO.builder()
                             .students(classroom.getStudents().stream()
-                                    .map(student -> StudentDTO.builder()
-                                            .username(student.getUsername())
-                                            .profileName(student.getProfileName())
-                                            .email(student.getEmail())
-                                            .phone(student.getPhone())
-                                            .build())
+                                    .map(student -> {
+                                        Parent parent = student.getParent();
+                                        return StudentDTO.builder()
+                                                .username(student.getUsername())
+                                                .profileName(student.getProfileName())
+                                                .email(student.getEmail())
+                                                .phone(student.getPhone())
+                                                .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
+                                                .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
+                                                .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
+                                                .build();
+                                    })
                                     .collect(Collectors.toSet()))
                             .build();
                 } else {
@@ -144,7 +157,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId) {
+    public StudentSetResponseDTO updateParent(String teacherUsername, String studentUsername, String parentUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
@@ -165,14 +178,20 @@ public class ClassroomServiceImpl implements ClassroomService {
                         }
                     }
                     userRepository.save(student);
-                    return StudentResponseDTO.builder()
+                    return StudentSetResponseDTO.builder()
                             .students(classroom.getStudents().stream()
-                                    .map(s -> StudentDTO.builder()
-                                            .username(s.getUsername())
-                                            .profileName(s.getProfileName())
-                                            .email(s.getEmail())
-                                            .phone(s.getPhone())
-                                            .build())
+                                    .map(s -> {
+                                        Parent parent = s.getParent();
+                                        return StudentDTO.builder()
+                                                .username(s.getUsername())
+                                                .profileName(s.getProfileName())
+                                                .email(s.getEmail())
+                                                .phone(s.getPhone())
+                                                .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
+                                                .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
+                                                .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
+                                                .build();
+                                    })
                                     .collect(Collectors.toSet()))
                             .build();
                 } else {
@@ -217,20 +236,26 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public StudentResponseDTO viewStudents(String teacherUsername, Long classroomId) {
+    public StudentSetResponseDTO viewStudents(String teacherUsername, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Teacher teacher = classroom.getTeacher();
             if (teacherUsername.equals(teacher.getUsername())) {
-                return StudentResponseDTO.builder()
+                return StudentSetResponseDTO.builder()
                         .students(classroom.getStudents().stream()
-                                .map(student -> StudentDTO.builder()
-                                        .username(student.getUsername())
-                                        .profileName(student.getProfileName())
-                                        .email(student.getEmail())
-                                        .phone(student.getPhone())
-                                        .build())
+                                .map(student -> {
+                                    Parent parent = student.getParent();
+                                    return StudentDTO.builder()
+                                            .username(student.getUsername())
+                                            .profileName(student.getProfileName())
+                                            .email(student.getEmail())
+                                            .phone(student.getPhone())
+                                            .parentUsername(Objects.nonNull(parent) ? parent.getUsername() : null)
+                                            .parentEmail(Objects.nonNull(parent) ? parent.getEmail() : null)
+                                            .parentPhone(Objects.nonNull(parent) ? parent.getPhone() : null)
+                                            .build();
+                                })
                                 .collect(Collectors.toSet()))
                         .build();
             } else {
