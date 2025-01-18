@@ -89,10 +89,10 @@ public class AnswerServiceImpl implements AnswerService {
             answerRepository.saveAll(answers);
 
             QuizDTO quizDTO = QuizDTO.builder()
+                    .id(quiz.getId())
                     .name(quiz.getName())
                     .totalMark(totalMark)
                     .maxMarks((double) quiz.getQuestions().size())
-                    .id(quiz.getId())
                     .questions(quiz.getQuestions().stream().map(question -> {
                                 Answer answer = question.getAnswers().stream()
                                         .filter(a -> studentUsername.equals(a.getStudent().getUsername()))
@@ -123,6 +123,7 @@ public class AnswerServiceImpl implements AnswerService {
                                 }
 
                                 return QuestionDTO.builder()
+                                        .id(question.getId())
                                         .question(question.getDescription())
                                         .type(questionType)
                                         .answers(ansSet)
