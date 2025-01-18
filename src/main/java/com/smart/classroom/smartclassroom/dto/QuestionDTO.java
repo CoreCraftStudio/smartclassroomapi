@@ -12,6 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionDTO {
+    Long id;
     String question;
     Set<String> answers;
     Set<String> matchAnswers;
