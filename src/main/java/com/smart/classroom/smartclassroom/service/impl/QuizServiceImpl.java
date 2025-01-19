@@ -259,6 +259,7 @@ public class QuizServiceImpl implements QuizService {
                                     }
 
                                     return QuestionDTO.builder()
+                                            .id(question.getId())
                                             .question(question.getDescription())
                                             .type(questionType)
                                             .answers(answers)
