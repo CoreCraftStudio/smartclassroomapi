@@ -1,8 +1,12 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
+import com.smart.classroom.smartclassroom.dto.AssignmentDTO;
 import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
 import com.smart.classroom.smartclassroom.dto.SubmissionRequestDTO;
-import com.smart.classroom.smartclassroom.entity.*;
+import com.smart.classroom.smartclassroom.entity.Assignment;
+import com.smart.classroom.smartclassroom.entity.Member;
+import com.smart.classroom.smartclassroom.entity.Student;
+import com.smart.classroom.smartclassroom.entity.Submission;
 import com.smart.classroom.smartclassroom.exception.ResourceNotFoundException;
 import com.smart.classroom.smartclassroom.repository.AssignmentRepository;
 import com.smart.classroom.smartclassroom.repository.SubmissionRepository;
@@ -36,9 +40,14 @@ public class SubmissionServiceImpl implements SubmissionService {
                     .build());
 
             submissionRepository.save(submission);
-            Classroom classroom = assignment.getClassroom();
             return AssignmentResponseDTO.builder()
-                    .assignments(classroom.getAssignments())
+                    .assignment(AssignmentDTO.builder()
+                            .id(assignment.getId())
+                            .name(assignment.getName())
+                            .name(assignment.getDescription())
+                            .attachmentId(assignment.getAttachmentId())
+                            .maxMark(assignment.getMaxMark())
+                            .build())
                     .build();
         } else {
             throw new ResourceNotFoundException("No assignment for given id");
@@ -51,10 +60,16 @@ public class SubmissionServiceImpl implements SubmissionService {
         if (optionalSubmission.isPresent()) {
             Submission submission = optionalSubmission.get();
             if (submission.getStudent().getUsername().equals(studentUsername)) {
-                Classroom classroom = submission.getAssignment().getClassroom();
+                Assignment assignment = submission.getAssignment();
                 assignmentRepository.deleteById(submissionId);
                 return AssignmentResponseDTO.builder()
-                        .assignments(classroom.getAssignments())
+                        .assignment(AssignmentDTO.builder()
+                                .id(assignment.getId())
+                                .name(assignment.getName())
+                                .description(assignment.getDescription())
+                                .attachmentId(assignment.getAttachmentId())
+                                .maxMark(assignment.getMaxMark())
+                                .build())
                         .build();
             } else {
                 throw new ResourceNotFoundException("Student not allow to delete the submission");

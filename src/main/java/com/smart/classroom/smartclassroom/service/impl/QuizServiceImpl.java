@@ -192,7 +192,6 @@ public class QuizServiceImpl implements QuizService {
                                             case MULTIPLE_RESPONSE -> {
                                                 answers = ((MultipleResponseQuestion) question).getResponses();
                                                 matchAnswers = ((MultipleResponseQuestion) question).getMatchResponses();
-
                                             }
                                             case MULTIPLE_CHOICE -> {
                                                 answers = ((MultipleChoiceQuestion) question).getChoices();
@@ -223,7 +222,7 @@ public class QuizServiceImpl implements QuizService {
                     throw new AuthorizationException("Teacher not allow to delete the quiz from the classroom");
                 }
             } else {
-                Optional<QuizMark> quizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
+                Optional<QuizMark> optionalQuizMark = quizMarkRepository.findByUsernameAndQuizId(username, quizId);
 
                 QuizDTO quizDTO = QuizDTO.builder()
                         .id(quiz.getId())
@@ -244,7 +243,6 @@ public class QuizServiceImpl implements QuizService {
                                             answers = ((MultipleResponseQuestion) question).getResponses();
                                             matchAnswers = Objects.nonNull(mark) ? ((MultipleResponseQuestion) question).getMatchResponses() : null;
                                             selectedAnswers = Objects.nonNull(answer) ? ((MultipleResponseAnswer) answer).getResponses() : null;
-
                                         }
                                         case MULTIPLE_CHOICE -> {
                                             answers = ((MultipleChoiceQuestion) question).getChoices();
@@ -270,8 +268,8 @@ public class QuizServiceImpl implements QuizService {
 
                                 })
                                 .collect(Collectors.toSet()))
-                        .totalMark(quizMark.map(QuizMark::getTotalMark).orElse(null))
-                        .maxMarks((double) quiz.getQuestions().size())
+                        .totalMark(optionalQuizMark.map(QuizMark::getTotalMark).orElse(null))
+                        .maxMark((double) quiz.getQuestions().size())
                         .build();
 
                 return QuizResponseDTO.builder()

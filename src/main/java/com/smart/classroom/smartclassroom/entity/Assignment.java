@@ -25,6 +25,8 @@ public class Assignment {
 
     Long matchAttachmentId;
 
+    Double maxMark;
+
     @OneToMany(mappedBy = "assignment")
     Set<Submission> submissions;
 

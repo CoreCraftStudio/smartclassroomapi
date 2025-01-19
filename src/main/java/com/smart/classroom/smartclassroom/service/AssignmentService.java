@@ -1,14 +1,14 @@
 package com.smart.classroom.smartclassroom.service;
 
 import com.smart.classroom.smartclassroom.dto.AssignmentRequestDTO;
-import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
+import com.smart.classroom.smartclassroom.dto.AssignmentSetResponseDTO;
 
 public interface AssignmentService {
 
-    AssignmentResponseDTO createAssignment(String teacherUsername, AssignmentRequestDTO assignmentRequestDTO);
+    AssignmentSetResponseDTO createAssignment(String teacherUsername, AssignmentRequestDTO assignmentRequestDTO);
 
-    AssignmentResponseDTO viewAssignments(String username, String type, Long classroomId);
+    AssignmentSetResponseDTO viewAssignments(String username, String type, Long classroomId);
 
-    AssignmentResponseDTO deleteAssignment(String teacherUsername, Long classroomId, Long assignmentId);
+    AssignmentSetResponseDTO deleteAssignment(String teacherUsername, Long classroomId, Long assignmentId);
 
 }

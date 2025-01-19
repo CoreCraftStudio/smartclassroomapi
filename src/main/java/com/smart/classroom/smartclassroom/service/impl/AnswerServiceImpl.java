@@ -92,31 +92,31 @@ public class AnswerServiceImpl implements AnswerService {
                     .id(quiz.getId())
                     .name(quiz.getName())
                     .totalMark(totalMark)
-                    .maxMarks((double) quiz.getQuestions().size())
+                    .maxMark((double) quiz.getQuestions().size())
                     .questions(quiz.getQuestions().stream().map(question -> {
                                 Answer answer = question.getAnswers().stream()
                                         .filter(a -> studentUsername.equals(a.getStudent().getUsername()))
                                         .findFirst().orElse(null);
 
                                 String questionType = questionRepository.findTypeById(question.getId());
-                                Set<String> ansSet;
+                                Set<String> answerSet;
                                 Set<String> matchAnswers;
                                 Double mark = Objects.nonNull(answer) ? answer.getMark() : null;
                                 Set<String> selectedAnswers;
                                 switch (questionType) {
                                     case MULTIPLE_RESPONSE -> {
-                                        ansSet = ((MultipleResponseQuestion) question).getResponses();
+                                        answerSet = ((MultipleResponseQuestion) question).getResponses();
                                         matchAnswers = Objects.nonNull(mark) ? ((MultipleResponseQuestion) question).getMatchResponses() : null;
                                         selectedAnswers = Objects.nonNull(answer) ? ((MultipleResponseAnswer) answer).getResponses() : null;
 
                                     }
                                     case MULTIPLE_CHOICE -> {
-                                        ansSet = ((MultipleChoiceQuestion) question).getChoices();
+                                        answerSet = ((MultipleChoiceQuestion) question).getChoices();
                                         matchAnswers = Objects.nonNull(mark) ? Set.of(((MultipleChoiceQuestion) question).getMatchChoice()) : null;
                                         selectedAnswers = Objects.nonNull(answer) ? Set.of(((MultipleChoiceAnswer) answer).getChoice()) : null;
                                     }
                                     default -> {
-                                        ansSet = null;
+                                        answerSet = null;
                                         matchAnswers = Objects.nonNull(mark) ? Set.of(((ShortAnswerQuestion) question).getMatchAnswer()) : null;
                                         selectedAnswers = Objects.nonNull(answer) ? Set.of(((ShortAnswerAnswer) answer).getAnswer()) : null;
                                     }
@@ -126,7 +126,7 @@ public class AnswerServiceImpl implements AnswerService {
                                         .id(question.getId())
                                         .question(question.getDescription())
                                         .type(questionType)
-                                        .answers(ansSet)
+                                        .answers(answerSet)
                                         .matchAnswers(matchAnswers)
                                         .selectedAnswers(selectedAnswers)
                                         .mark(mark)
@@ -135,7 +135,7 @@ public class AnswerServiceImpl implements AnswerService {
                             })
                             .collect(Collectors.toSet()))
                     .totalMark(quizMark.getTotalMark())
-                    .maxMarks((double) quiz.getQuestions().size())
+                    .maxMark((double) quiz.getQuestions().size())
                     .build();
 
             return QuizResponseDTO.builder()

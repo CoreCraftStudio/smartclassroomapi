@@ -5,17 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizDTO {
+public class AssignmentDTO {
     Long id;
     String name;
     String description;
-    Set<QuestionDTO> questions;
-    Double totalMark;
+    Long attachmentId;
+    Long matchAttachmentId;
+    Long submissionId;
+    String answer;
+    Long submissionAttachmentId;
+    Double mark;
     Double maxMark;
 }
