@@ -11,11 +11,6 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuizDTO {
-    Long id;
-    String name;
-    String description;
-    Set<QuestionDTO> questions;
-    Double totalMark;
-    Double maxMark;
+public class AssignmentSetResponseDTO {
+    Set<AssignmentDTO> assignments;
 }

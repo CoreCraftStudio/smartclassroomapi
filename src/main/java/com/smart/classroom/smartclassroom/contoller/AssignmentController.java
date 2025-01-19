@@ -1,7 +1,7 @@
 package com.smart.classroom.smartclassroom.contoller;
 
 import com.smart.classroom.smartclassroom.dto.AssignmentRequestDTO;
-import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
+import com.smart.classroom.smartclassroom.dto.AssignmentSetResponseDTO;
 import com.smart.classroom.smartclassroom.service.AssignmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -19,21 +19,21 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
 
     @PostMapping("/assignments")
-    public AssignmentResponseDTO createAssignment(@RequestBody AssignmentRequestDTO assignmentRequestDTO) {
+    public AssignmentSetResponseDTO createAssignment(@RequestBody AssignmentRequestDTO assignmentRequestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return assignmentService.createAssignment(user.getUsername(), assignmentRequestDTO);
     }
 
     @DeleteMapping("/assignments")
-    public AssignmentResponseDTO deleteAssignment(@RequestParam Long classroomId, @RequestParam Long assignmentId) {
+    public AssignmentSetResponseDTO deleteAssignment(@RequestParam Long classroomId, @RequestParam Long assignmentId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return assignmentService.deleteAssignment(user.getUsername(), classroomId, assignmentId);
     }
 
     @GetMapping("/assignments")
-    public AssignmentResponseDTO viewAssignments(@RequestParam Long classroomId) {
+    public AssignmentSetResponseDTO viewAssignments(@RequestParam Long classroomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         Optional<GrantedAuthority> optionalAuthority = user.getAuthorities().stream().findFirst();

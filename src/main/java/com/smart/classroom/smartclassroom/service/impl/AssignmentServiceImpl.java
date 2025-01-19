@@ -1,7 +1,8 @@
 package com.smart.classroom.smartclassroom.service.impl;
 
+import com.smart.classroom.smartclassroom.dto.AssignmentDTO;
 import com.smart.classroom.smartclassroom.dto.AssignmentRequestDTO;
-import com.smart.classroom.smartclassroom.dto.AssignmentResponseDTO;
+import com.smart.classroom.smartclassroom.dto.AssignmentSetResponseDTO;
 import com.smart.classroom.smartclassroom.entity.*;
 import com.smart.classroom.smartclassroom.exception.AuthenticationException;
 import com.smart.classroom.smartclassroom.exception.AuthorizationException;
@@ -30,7 +31,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     private final ClassroomRepository classroomRepository;
 
     @Override
-    public AssignmentResponseDTO createAssignment(String teacherUsername, AssignmentRequestDTO assignmentRequestDTO) {
+    public AssignmentSetResponseDTO createAssignment(String teacherUsername, AssignmentRequestDTO assignmentRequestDTO) {
         Long classroomId = assignmentRequestDTO.getClassroomId();
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
@@ -49,8 +50,14 @@ public class AssignmentServiceImpl implements AssignmentService {
                     assignments.add(assignment);
                     classroomRepository.save(classroom);
 
-                    return AssignmentResponseDTO.builder()
-                            .assignments(assignments)
+                    return AssignmentSetResponseDTO.builder()
+                            .assignments(assignments.stream()
+                                    .map(a -> AssignmentDTO.builder()
+                                            .id(a.getId())
+                                            .name(a.getName())
+                                            .description(a.getDescription())
+                                            .build())
+                                    .collect(Collectors.toSet()))
                             .build();
                 } else {
                     throw new AuthenticationException("Teacher not allow to add an assignment to the classroom");
@@ -65,15 +72,21 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public AssignmentResponseDTO viewAssignments(String username, String type, Long classroomId) {
+    public AssignmentSetResponseDTO viewAssignments(String username, String type, Long classroomId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Classroom classroom = optionalClassroom.get();
             Set<Assignment> assignments = classroom.getAssignments();
             if (TEACHER.equals(type)) {
                 if (username.equals(classroom.getTeacher().getUsername())) {
-                    return AssignmentResponseDTO.builder()
-                            .assignments(assignments)
+                    return AssignmentSetResponseDTO.builder()
+                            .assignments(assignments.stream()
+                                    .map(assignment -> AssignmentDTO.builder()
+                                            .id(assignment.getId())
+                                            .name(assignment.getName())
+                                            .description(assignment.getDescription())
+                                            .build())
+                                    .collect(Collectors.toSet()))
                             .build();
                 } else {
                     throw new AuthorizationException("Teacher not allow to view the assignment");
@@ -86,8 +99,14 @@ public class AssignmentServiceImpl implements AssignmentService {
                             .collect(Collectors.toSet())
                             .removeIf(submission -> !username.equals(submission.getStudent().getUsername()));
 
-                    return AssignmentResponseDTO.builder()
-                            .assignments(assignments)
+                    return AssignmentSetResponseDTO.builder()
+                            .assignments(assignments.stream()
+                                    .map(assignment -> AssignmentDTO.builder()
+                                            .id(assignment.getId())
+                                            .name(assignment.getName())
+                                            .description(assignment.getDescription())
+                                            .build())
+                                    .collect(Collectors.toSet()))
                             .build();
                 } else {
                     throw new AuthorizationException("Student not allow to view the assignment");
@@ -99,7 +118,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public AssignmentResponseDTO deleteAssignment(String teacherUsername, Long classroomId, Long assignmentId) {
+    public AssignmentSetResponseDTO deleteAssignment(String teacherUsername, Long classroomId, Long assignmentId) {
         Optional<Classroom> optionalClassroom = classroomRepository.findById(classroomId);
         if (optionalClassroom.isPresent()) {
             Optional<Member> optionalTeacher = userRepository.findByUsername(teacherUsername);
@@ -110,8 +129,14 @@ public class AssignmentServiceImpl implements AssignmentService {
                     if (assignmentOptional.isPresent()) {
                         assignmentRepository.deleteById(assignmentId);
                         Classroom classroom = optionalClassroom.get();
-                        return AssignmentResponseDTO.builder()
-                                .assignments(classroom.getAssignments())
+                        return AssignmentSetResponseDTO.builder()
+                                .assignments(classroom.getAssignments().stream()
+                                        .map(assignment -> AssignmentDTO.builder()
+                                                .id(assignment.getId())
+                                                .name(assignment.getName())
+                                                .description(assignment.getDescription())
+                                                .build())
+                                        .collect(Collectors.toSet()))
                                 .build();
                     } else {
                         throw new ResourceNotFoundException("No assignment for given id");

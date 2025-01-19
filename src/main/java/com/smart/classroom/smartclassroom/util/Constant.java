@@ -10,6 +10,7 @@ public final class Constant {
     public static final class UserConstant {
         public static final String TEACHER = "teacher";
         public static final String STUDENT = "student";
+        public static final String PARENT = "parent";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
