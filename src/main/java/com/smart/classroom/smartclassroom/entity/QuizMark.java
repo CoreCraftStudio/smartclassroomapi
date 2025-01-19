@@ -16,12 +16,12 @@ public class QuizMark {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
-    @OneToOne
-    @JoinColumn(name = "student_username", referencedColumnName = "username")
+    @ManyToOne
+    @JoinColumn(name = "student_username", nullable = false)
     Student student;
 
-    @OneToOne
-    @JoinColumn(name = "quiz_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "quiz_id", nullable = false)
     Quiz quiz;
 
     Double totalMark;
